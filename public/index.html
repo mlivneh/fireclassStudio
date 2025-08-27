@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Studio - App Publisher</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="login-container" class="login-container">
+        <h1>Vibe Studio Publisher</h1>
+        <p>Enter your email to get a secure sign-in link.</p>
+        <form id="login-form">
+            <div class="form-group">
+                <input type="email" id="email-input" class="form-input" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" id="send-link-btn" class="btn btn-primary">Send Sign-In Link</button>
+        </form>
+        <div id="feedback-message" class="feedback-message"></div>
+    </div>
+
+    <div id="studio-container" class="studio-container" style="display: none;">
+        <header>
+            <h2>Vibe Studio</h2>
+            <div>
+                <button id="publisher-view-btn" class="btn btn-secondary active">Publisher</button>
+                <button id="gallery-view-btn" class="btn btn-secondary">App Gallery</button>
+                <button id="logout-btn" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <main id="publisher-view">
+            <div class="form-panel">
+                <h3>1. App Details</h3>
+                <div class="form-group">
+                    <label for="app-name">App Name</label>
+                    <input type="text" id="app-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="grade-level">Grade Level (K-12)</label>
+                    <input type="text" id="grade-level" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="school-code">School Code (Optional)</label>
+                    <input type="text" id="school-code" class="form-input" placeholder="Leave blank for public (00000)">
+                </div>
+                <div class="form-group">
+                    <label for="pedagogy">Pedagogical Explanation</label>
+                    <textarea id="pedagogy" class="form-input" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions (Optional)</label>
+                    <textarea id="instructions" class="form-input" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="upload-panel">
+                <div class="upload-tabs">
+                    <button id="paste-tab-btn" class="tab-btn active" data-view="paste-view">Paste HTML Code</button>
+                    <button id="folder-tab-btn" class="tab-btn" data-view="folder-view">Upload Folder (ZIP)</button>
+                </div>
+
+                <div id="paste-view" class="upload-content">
+                    <h3>2. Paste App Code</h3>
+                    <button id="paste-btn" class="btn btn-secondary">Paste from Clipboard</button>
+                    <textarea id="html-input" placeholder=""></textarea>
+                    <button id="publish-html-btn" class="btn btn-primary">Publish Pasted Code</button>
+                </div>
+
+                <div id="folder-view" class="upload-content" style="display: none;">
+                    <h3>2. Upload App Folder</h3>
+                    <p>Zip your project folder and upload the single ZIP file.</p>
+                    <input type="file" id="zip-input" accept=".zip">
+                    <div id="file-list"></div>
+                    <button id="publish-zip-btn" class="btn btn-primary">Publish ZIP File</button>
+                </div>
+                 <p id="publish-feedback"></p>
+            </div>
+        </main>
+        
+        <main id="gallery-view" style="display: none;">
+             <h3>App Gallery</h3>
+             <div id="gallery-grid">
+                </div>
+        </main>
+    </div>
+
+    <div id="results-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>App Published Successfully!</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <p><strong>Full URL:</strong> <a id="result-long-url" href="#" target="_blank"></a></p>
+            <p><strong>Short URL:</strong> <a id="result-short-url" href="#" target="_blank"></a></p>
+            <div id="qrcode-container"></div>
+        </div>
+    </div>
+    <div id="preview-modal" class="modal-overlay">
+        <div class="modal-content large">
+             <div class="modal-header">
+                <h3 id="preview-title">Preview</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <iframe id="preview-iframe"></iframe>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script type="module" src="js/studio.js"></script>
+</body>
+</html>
