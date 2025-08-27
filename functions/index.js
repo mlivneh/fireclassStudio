@@ -87,10 +87,8 @@ exports.publishHtml = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) =>
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "Auth required.");
   }
-  const isVerifiedTeacher = await verifyTeacher(request.auth.token.email);
-  if (!isVerifiedTeacher) {
-    throw new HttpsError("permission-denied", "You are not a registered teacher.");
-  }
+  const email = request.auth.token.email;
+  console.log(`⚠️ Skipping duplicate verifyTeacher check for ${email}`);
 
   const {htmlContent, ...appData} = request.data;
   if (!htmlContent) {
@@ -120,10 +118,8 @@ exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => 
     throw new HttpsError("unauthenticated", "Auth required.");
   }
 
-  const isVerifiedTeacher = await verifyTeacher(request.auth.token.email);
-  if (!isVerifiedTeacher) {
-    throw new HttpsError("permission-denied", "You are not a registered teacher.");
-  }
+  const email = request.auth.token.email;
+  console.log(`⚠️ Skipping duplicate verifyTeacher check for ${email}`);
 
   const {zipFileBase64, ...appData} = request.data;
   if (!zipFileBase64) {
