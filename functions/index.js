@@ -5,7 +5,7 @@
  */
 
 // V2 Imports
-const {onCall} = require("firebase-functions/v2/https");
+const {onCall, HttpsError} = require("firebase-functions/v2/https");
 
 // Node.js and Third-party Imports
 const admin = require("firebase-admin");
@@ -85,16 +85,16 @@ async function saveMetadata(appData, publicUrl, authContext) {
  */
 exports.publishHtml = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => {
   if (!request.auth) {
-    throw new onCall.HttpsError("unauthenticated", "Auth required.");
+    throw new HttpsError("unauthenticated", "Auth required.");
   }
   const isVerifiedTeacher = await verifyTeacher(request.auth.token.email);
   if (!isVerifiedTeacher) {
-    throw new onCall.HttpsError("permission-denied", "You are not a registered teacher.");
+    throw new HttpsError("permission-denied", "You are not a registered teacher.");
   }
 
   const {htmlContent, ...appData} = request.data;
   if (!htmlContent) {
-    throw new onCall.HttpsError("invalid-argument", "HTML content is missing.");
+    throw new HttpsError("invalid-argument", "HTML content is missing.");
   }
 
   const bucket = storage.bucket();
@@ -117,17 +117,17 @@ exports.publishHtml = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) =>
  */
 exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => {
   if (!request.auth) {
-    throw new onCall.HttpsError("unauthenticated", "Auth required.");
+    throw new HttpsError("unauthenticated", "Auth required.");
   }
 
   const isVerifiedTeacher = await verifyTeacher(request.auth.token.email);
   if (!isVerifiedTeacher) {
-    throw new onCall.HttpsError("permission-denied", "You are not a registered teacher.");
+    throw new HttpsError("permission-denied", "You are not a registered teacher.");
   }
 
   const {zipFileBase64, ...appData} = request.data;
   if (!zipFileBase64) {
-    throw new onCall.HttpsError("invalid-argument", "ZIP file is missing.");
+    throw new HttpsError("invalid-argument", "ZIP file is missing.");
   }
 
   const bucket = storage.bucket();
@@ -164,12 +164,12 @@ exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => 
  */
 exports.downloadCode = onCall(async (request) => {
   if (!request.auth) {
-    throw new onCall.HttpsError("unauthenticated", "Auth required.");
+    throw new HttpsError("unauthenticated", "Auth required.");
   }
 
   const url = request.data.url;
   if (!url) {
-    throw new onCall.HttpsError("invalid-argument", "URL is missing.");
+    throw new HttpsError("invalid-argument", "URL is missing.");
   }
 
   if (request.data.isZip) {
@@ -180,7 +180,7 @@ exports.downloadCode = onCall(async (request) => {
       return {content: content[0].toString("base64")};
     } catch (error) {
       console.error("Failed to download ZIP from storage:", error);
-      throw new onCall.HttpsError("internal", "File not found in storage.");
+      throw new HttpsError("internal", "File not found in storage.");
     }
   } else {
     return new Promise((resolve, reject) => {
@@ -188,7 +188,7 @@ exports.downloadCode = onCall(async (request) => {
         let content = "";
         res.on("data", (chunk) => (content += chunk));
         res.on("end", () => resolve({content}));
-      }).on("error", (err) => reject(new onCall.HttpsError("internal", err.message)));
+      }).on("error", (err) => reject(new HttpsError("internal", err.message)));
     });
   }
 });
