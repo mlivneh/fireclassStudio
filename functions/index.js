@@ -95,19 +95,29 @@ exports.publishHtml = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) =>
     throw new HttpsError("invalid-argument", "HTML content is missing.");
   }
 
-  const bucket = storage.bucket();
+  const bucket = admin.storage().bucket();
   const uniqueId = `${Date.now()}`;
   const filePath = `apps/${request.auth.uid}/${uniqueId}/index.html`;
   const file = bucket.file(filePath);
 
-  await file.save(htmlContent, {metadata: {contentType: "text/html"}});
-  await file.makePublic();
+  await file.save(htmlContent, { contentType: 'text/html' });
 
-  const longUrl = file.publicUrl();
-  await saveMetadata(appData, longUrl, request.auth);
-  const shortUrl = await getShortUrl(longUrl);
+  console.log(`📦 Bucket: ${bucket.name}, FilePath: ${filePath}`);
 
-  return {success: true, longUrl, shortUrl};
+  try {
+    const [signedUrl] = await file.getSignedUrl({
+      action: 'read',
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 365, // 1 year
+    });
+    
+    await saveMetadata(appData, signedUrl, request.auth);
+    const shortUrl = await getShortUrl(signedUrl);
+    
+    return {success: true, longUrl: signedUrl, shortUrl};
+  } catch (error) {
+    console.error(`❌ Error creating signed URL: ${error.code} - ${error.message}`);
+    throw new HttpsError("internal", "Failed to create access URL");
+  }
 });
 
 /**
@@ -126,33 +136,42 @@ exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => 
     throw new HttpsError("invalid-argument", "ZIP file is missing.");
   }
 
-  const bucket = storage.bucket();
-  const uniqueId = `${Date.now()}`;
-  const baseFolderPath = `apps/${request.auth.uid}/${uniqueId}`;
-  const zip = await jszip.loadAsync(zipFileBase64, {base64: true});
+  const bucket = admin.storage().bucket(); // שמור אחיד כמו ב-HTML
 
+  const zip = await jszip.loadAsync(zipFileBase64, { base64: true });
   const uploadPromises = [];
   zip.forEach((relativePath, zipEntry) => {
     if (!zipEntry.dir) {
       const filePath = `${baseFolderPath}/${relativePath}`;
       const file = bucket.file(filePath);
       const stream = zipEntry.nodeStream();
-      const promise = new Promise((resolve, reject) => {
-        stream.pipe(file.createWriteStream({public: true, contentType: "auto"}))
-            .on("error", reject)
-            .on("finish", resolve);
+      const p = new Promise((resolve, reject) => {
+        stream
+          .pipe(
+            file.createWriteStream({
+              // בלי public:true – אין ACL ציבורי בבאקטים החדשים
+              metadata: { contentType: "application/octet-stream" }
+            })
+          )
+          .on("error", reject)
+          .on("finish", resolve);
       });
-      uploadPromises.push(promise);
+      uploadPromises.push(p);
     }
   });
-
   await Promise.all(uploadPromises);
 
-  const longUrl = bucket.file(`${baseFolderPath}/index.html`).publicUrl();
-  await saveMetadata(appData, longUrl, request.auth);
-  const shortUrl = await getShortUrl(longUrl);
+  // URL הכניסה (index.html) – הפק Signed URL לקריאה
+  const entry = bucket.file(`${baseFolderPath}/index.html`);
+  const [signedUrl] = await entry.getSignedUrl({
+    action: "read",
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 365 // שנה
+  });
 
-  return {success: true, longUrl, shortUrl};
+  console.log(`📦 Bucket: ${bucket.name}, Entry: ${baseFolderPath}/index.html`);
+  await saveMetadata(appData, signedUrl, request.auth);
+  const shortUrl = await getShortUrl(signedUrl);
+  return { success: true, longUrl: signedUrl, shortUrl };
 });
 
 /**
@@ -169,13 +188,37 @@ exports.downloadCode = onCall(async (request) => {
   }
 
   if (request.data.isZip) {
-    const bucketName = "fireclassstudio.appspot.com";
-    const filePath = decodeURIComponent(url.split(`${bucketName}/`)[1].split("?")[0]);
+    const bucket = admin.storage().bucket();
+    let filePath;
+
     try {
-      const content = await storage.bucket(bucketName).file(filePath).download();
-      return {content: content[0].toString("base64")};
+      const u = new URL(url);
+
+      // פורמטים אפשריים:
+      // 1) https://storage.googleapis.com/<bucket>/<path>?...
+      // 2) https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<encodedPath>?alt=media&token=...
+      // נחלץ את ה-path לפי המקרה:
+      if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${bucket.name}/`)) {
+        // case 1
+        filePath = decodeURIComponent(u.pathname.slice(bucket.name.length + 2));
+      } else if (u.hostname.includes("firebasestorage.googleapis.com") && u.pathname.includes(`/v0/b/${bucket.name}/o/`)) {
+        // case 2
+        filePath = decodeURIComponent(u.pathname.split(`/v0/b/${bucket.name}/o/`)[1]);
+      } else {
+        // ניסיון כללי (שמירה על תאימות לאחור)
+        const parts = url.split(`${bucket.name}/`);
+        if (parts[1]) filePath = decodeURIComponent(parts[1].split("?")[0]);
+      }
+
+      if (!filePath) {
+        console.error("❌ Could not parse filePath from URL:", url);
+        throw new HttpsError("invalid-argument", "Unsupported storage URL format.");
+      }
+
+      const content = await bucket.file(filePath).download();
+      return { content: content[0].toString("base64") };
     } catch (error) {
-      console.error("Failed to download ZIP from storage:", error);
+      console.error("Failed to download from storage:", error.code, error.message);
       throw new HttpsError("internal", "File not found in storage.");
     }
   } else {
