@@ -13,7 +13,7 @@ const https = require("https");
 const jszip = require("jszip");
 const axios = require("axios");
 
-admin.initializeApp();
+admin.initializeApp({ storageBucket: 'fireclassstudio.firebasestorage.app' });
 const firestore = admin.firestore();
 const storage = admin.storage();
 
