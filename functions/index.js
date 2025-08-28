@@ -104,24 +104,26 @@ exports.publishHtml = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) =>
   const filePath = `apps/${request.auth.uid}/${uniqueId}/index.html`;
   const file = bucket.file(filePath);
 
-  await file.save(htmlContent, { contentType: 'text/html' });
+  // יצירת token אקראי להורדה
+  const downloadToken = require('crypto').randomUUID();
+  
+  await file.save(htmlContent, { 
+    contentType: 'text/html',
+    metadata: {
+      firebaseStorageDownloadTokens: downloadToken
+    }
+  });
 
   console.log(`📦 Bucket: ${bucket.name}, FilePath: ${filePath}`);
 
-  try {
-    const [signedUrl] = await file.getSignedUrl({
-      action: 'read',
-      expires: Date.now() + 1000 * 60 * 60 * 24 * 365, // 1 year
-    });
-    
-    await saveMetadata(appData, signedUrl, request.auth);
-    const shortUrl = await getShortUrl(signedUrl);
-    
-    return {success: true, longUrl: signedUrl, shortUrl};
-  } catch (error) {
-    console.error(`❌ Error creating signed URL: ${error.code} - ${error.message}`);
-    throw new HttpsError("internal", "Failed to create access URL");
-  }
+  // בניית URL עם Download Token
+  const encodedPath = encodeURIComponent(filePath);
+  const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
+  
+  await saveMetadata(appData, longUrl, request.auth);
+  const shortUrl = await getShortUrl(longUrl);
+  
+  return {success: true, longUrl, shortUrl};
 });
 
 /**
@@ -167,17 +169,26 @@ exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => 
   });
   await Promise.all(uploadPromises);
 
-  // URL הכניסה (index.html) – הפק Signed URL לקריאה
-  const entry = bucket.file(`${baseFolderPath}/index.html`);
-  const [signedUrl] = await entry.getSignedUrl({
-    action: "read",
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 365 // שנה
+  // יצירת token אקראי להורדה עבור index.html
+  const downloadToken = require('crypto').randomUUID();
+  const indexFile = bucket.file(`${baseFolderPath}/index.html`);
+  
+  // עדכון המטא-דאטה של index.html עם token
+  await indexFile.setMetadata({
+    metadata: {
+      firebaseStorageDownloadTokens: downloadToken
+    }
   });
 
   console.log(`📦 Bucket: ${bucket.name}, Entry: ${baseFolderPath}/index.html`);
-  await saveMetadata(appData, signedUrl, request.auth);
-  const shortUrl = await getShortUrl(signedUrl);
-  return { success: true, longUrl: signedUrl, shortUrl };
+  
+  // בניית URL עם Download Token
+  const encodedPath = encodeURIComponent(`${baseFolderPath}/index.html`);
+  const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
+  
+  await saveMetadata(appData, longUrl, request.auth);
+  const shortUrl = await getShortUrl(longUrl);
+  return { success: true, longUrl, shortUrl };
 });
 
 /**
@@ -200,16 +211,15 @@ exports.downloadCode = onCall(async (request) => {
     try {
       const u = new URL(url);
 
-      // פורמטים אפשריים:
-      // 1) https://storage.googleapis.com/<bucket>/<path>?...
-      // 2) https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<encodedPath>?alt=media&token=...
-      // נחלץ את ה-path לפי המקרה:
-      if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${bucket.name}/`)) {
-        // case 1
-        filePath = decodeURIComponent(u.pathname.slice(bucket.name.length + 2));
-      } else if (u.hostname.includes("firebasestorage.googleapis.com") && u.pathname.includes(`/v0/b/${bucket.name}/o/`)) {
-        // case 2
+      // תמיכה בשני פורמטים של קישורים:
+      // 1) firebasestorage.googleapis.com/v0/b/<bucket>/o/<ENCODED_PATH>?alt=media&token=...
+      // 2) storage.googleapis.com/<bucket>/<path>
+      if (u.hostname.includes("firebasestorage.googleapis.com") && u.pathname.includes(`/v0/b/${bucket.name}/o/`)) {
+        // case 1: Firebase Storage v0 format
         filePath = decodeURIComponent(u.pathname.split(`/v0/b/${bucket.name}/o/`)[1]);
+      } else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${bucket.name}/`)) {
+        // case 2: Google Cloud Storage format
+        filePath = decodeURIComponent(u.pathname.slice(bucket.name.length + 2));
       } else {
         // ניסיון כללי (שמירה על תאימות לאחור)
         const parts = url.split(`${bucket.name}/`);

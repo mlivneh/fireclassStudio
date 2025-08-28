@@ -30,6 +30,7 @@ const publishZipBtn = document.getElementById('publish-zip-btn');
 const publishFeedback = document.getElementById('publish-feedback');
 const resultsModal = document.getElementById('results-modal');
 const previewModal = document.getElementById('preview-modal');
+const loadingModal = document.getElementById('loading-modal');
 const galleryGrid = document.getElementById('gallery-grid');
 
 // --- 1. Authentication Logic ---
@@ -181,6 +182,9 @@ publishZipBtn.addEventListener('click', () => {
 
 // C. Generic Publish Function
 async function publish(functionName, appData) {
+    // Show loading spinner
+    loadingModal.style.display = 'flex';
+    
     publishFeedback.textContent = 'Publishing... Please wait...';
     publishFeedback.style.color = 'var(--text-color)';
     
@@ -189,6 +193,8 @@ async function publish(functionName, appData) {
         const result = await callableFunction(appData);
 
         if (result.data.success) {
+            // Hide loading spinner
+            loadingModal.style.display = 'none';
             showResultsModal(result.data);
             publishFeedback.textContent = '';
         } else {
@@ -196,6 +202,8 @@ async function publish(functionName, appData) {
         }
     } catch (error) {
         console.error("Error publishing: ", error);
+        // Hide loading spinner
+        loadingModal.style.display = 'none';
         publishFeedback.textContent = `Error: ${error.message}`;
         publishFeedback.style.color = 'var(--error-color)';
     }
