@@ -17,6 +17,10 @@ admin.initializeApp({ storageBucket: 'fireclassstudio.firebasestorage.app' });
 const firestore = admin.firestore();
 const storage = admin.storage();
 
+// לוג אחרי האתחול שמדפיס את שם הבקט בפועל
+const bucket = admin.storage().bucket();
+console.log(`🚀 Firebase Admin initialized with bucket: ${bucket.name}`);
+
 /**
  * Verifies a user's email against the central fireClass teacher registry.
  * @param {string} email The user's email to verify.
@@ -136,6 +140,8 @@ exports.publishZip = onCall({secrets: ["INTERNAL_API_KEY"]}, async (request) => 
     throw new HttpsError("invalid-argument", "ZIP file is missing.");
   }
 
+  const uniqueId = `${Date.now()}`;
+  const baseFolderPath = `apps/${request.auth.uid}/${uniqueId}`;
   const bucket = admin.storage().bucket(); // שמור אחיד כמו ב-HTML
 
   const zip = await jszip.loadAsync(zipFileBase64, { base64: true });

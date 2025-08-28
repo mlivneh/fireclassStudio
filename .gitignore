@@ -11,7 +11,7 @@ firebase-debug.*.log*
 .firebase/
 
 # Firebase config
-public/js/firebase-config.js
+
 # .firebaserc  # השאר מוחרז אם תרצה שכל הצוות ישתמש באותו פרויקט
 
 # Runtime data
