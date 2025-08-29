@@ -1,128 +1,148 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Studio - App Publisher</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Vibe Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif; }
+        .hidden { display: none; }
+        [dir="rtl"] .form-input, [dir="rtl"] textarea { text-align: right; }
+        .preview-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            color: #6b7280;
+            text-align: center;
+        }
+        #preview-iframe.hidden { display: none; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100">
 
-    <div id="login-container" class="login-container">
-        <h1>Vibe Studio Publisher</h1>
-        <p>Enter your email to get a secure sign-in link.</p>
-        <form id="login-form">
-            <div class="form-group">
-                <input type="email" id="email-input" class="form-input" placeholder="Enter your email" required>
-            </div>
-            <button type="submit" id="send-link-btn" class="btn btn-primary">Send Sign-In Link</button>
-        </form>
-        <div id="feedback-message" class="feedback-message"></div>
+    <!-- Login Container -->
+    <div id="login-container" class="min-h-screen flex items-center justify-center">
+        <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold text-center text-blue-600 mb-2" data-lang="login_title">Vibe Studio</h1>
+            <p class="text-center text-gray-600 mb-6" data-lang="login_prompt">הכנס את המייל לקבלת קישור כניסה מאובטח.</p>
+            <form id="login-form">
+                <input type="email" id="email-input" class="w-full p-3 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="your@email.com" required>
+                <button type="submit" id="send-link-btn" class="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors" data-lang="send_link_btn">שלח קישור</button>
+            </form>
+            <div id="feedback-message" class="mt-4 text-center"></div>
+        </div>
     </div>
 
-    <div id="studio-container" class="studio-container" style="display: none;">
-        <header>
-            <h2>Vibe Studio</h2>
-            <div>
-                <button id="publisher-view-btn" class="btn btn-secondary active">Publisher</button>
-                <button id="gallery-view-btn" class="btn btn-secondary">App Gallery</button>
-                <button id="logout-btn" class="btn btn-secondary">Logout</button>
+    <!-- Main Studio Container -->
+    <div id="studio-container" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600" data-lang="studio_title">Vibe Studio</h1>
+            <div class="flex items-center space-x-4 md:space-x-6">
+                 <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                    <button id="lang-en-btn" class="px-3 py-1 text-sm rounded-md">EN</button>
+                    <button id="lang-he-btn" class="px-3 py-1 text-sm rounded-md bg-blue-100 text-blue-700">HE</button>
+                </div>
+                <button id="gallery-view-btn" class="hidden md:block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md" data-lang="gallery_btn">גלריה</button>
+                <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" data-lang="logout_btn">התנתק</button>
             </div>
         </header>
 
-        <main id="publisher-view">
-            <div class="form-panel">
-                <h3>1. App Details</h3>
-                <div class="form-group">
-                    <label for="app-name">App Name</label>
-                    <input type="text" id="app-name" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="grade-level">Grade Level (K-12)</label>
-                    <input type="text" id="grade-level" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="school-code">School Code (Optional)</label>
-                    <input type="text" id="school-code" class="form-input" placeholder="Leave blank for public (00000)">
-                </div>
-                <div class="form-group">
-                    <label for="pedagogy">Pedagogical Explanation</label>
-                    <textarea id="pedagogy" class="form-input" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="instructions">Instructions (Optional)</label>
-                    <textarea id="instructions" class="form-input" rows="3"></textarea>
+        <!-- AI Creator View -->
+        <main id="creator-view" class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Panel: Form -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md h-fit">
+                <h2 class="text-lg font-bold mb-4 border-b pb-2" data-lang="app_details_title">1. פרטי האפליקציה</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="app-name" class="block text-sm font-medium text-gray-700" data-lang="app_name_label">שם האפליקציה</label>
+                        <input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                     <div>
+                        <label for="grade-level" class="block text-sm font-medium text-gray-700" data-lang="grade_level_label">שכבת גיל</label>
+                        <input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="domain-input" class="block text-sm font-medium text-gray-700" data-lang="domain_label">תחום</label>
+                        <input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="sub-domain-input" class="block text-sm font-medium text-gray-700" data-lang="sub_domain_label">תת-תחום</label>
+                        <input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                     <div>
+                        <label for="pedagogy" class="block text-sm font-medium text-gray-700" data-lang="pedagogy_label">הסבר פדגוגי</label>
+                        <textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea>
+                    </div>
                 </div>
             </div>
-            <div class="upload-panel">
-                <div class="upload-tabs">
-                    <button id="paste-tab-btn" class="tab-btn active" data-view="paste-view">Paste HTML Code</button>
-                    <button id="folder-tab-btn" class="tab-btn" data-view="folder-view">Upload Folder (ZIP)</button>
+
+            <!-- Right Panel: AI Prompt, Preview and Code -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold mb-2" data-lang="ai_prompt_title">2. תאר את היישומון הרצוי</h2>
+                    <textarea id="ai-prompt-input" rows="4" class="w-full border-gray-300 rounded-md shadow-sm p-3" data-lang-placeholder="ai_prompt_placeholder"></textarea>
+                    <button id="generate-ai-btn" class="mt-2 w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
+                        <span data-lang="generate_btn">צור עם AI</span>
+                    </button>
                 </div>
 
-                <div id="paste-view" class="upload-content">
-                    <h3>2. Paste App Code</h3>
-                    <button id="paste-btn" class="btn btn-secondary">Paste from Clipboard</button>
-                    <textarea id="html-input" placeholder=""></textarea>
-                    <button id="publish-html-btn" class="btn btn-primary">Publish Pasted Code</button>
-                </div>
+                <div id="generation-result-area" class="hidden">
+                    <h2 class="text-lg font-bold mb-2" data-lang="preview_title">3. תצוגה מקדימה</h2>
+                    <div id="preview-container" class="w-full h-96 border rounded-md shadow-inner overflow-hidden">
+                       <iframe id="preview-iframe" class="w-full h-full hidden"></iframe>
+                       <div class="preview-placeholder">
+                           <p data-lang="preview_placeholder">התצוגה המקדימה של היישומון תופיע כאן...</p>
+                       </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h3 class="font-semibold" data-lang="generated_code_title">קוד HTML שנוצר:</h3>
+                        <textarea id="html-code-output" rows="6" readonly class="mt-1 w-full bg-gray-50 p-2 border rounded-md font-mono text-sm ltr:text-left rtl:text-right"></textarea>
+                    </div>
 
-                <div id="folder-view" class="upload-content" style="display: none;">
-                    <h3>2. Upload App Folder</h3>
-                    <p>Zip your project folder and upload the single ZIP file.</p>
-                    <input type="file" id="zip-input" accept=".zip">
-                    <div id="file-list"></div>
-                    <button id="publish-zip-btn" class="btn btn-primary">Publish ZIP File</button>
+                    <button id="publish-btn" class="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-rocket ltr:mr-2 rtl:ml-2"></i>
+                        <span data-lang="publish_btn">פרסם לגלריה</span>
+                    </button>
                 </div>
-                 <p id="publish-feedback"></p>
+                 <div id="loading-spinner" class="hidden text-center p-8">
+                    <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
+                    <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
+                </div>
             </div>
         </main>
         
-        <main id="gallery-view" style="display: none;">
-             <h3>App Gallery</h3>
-             <div id="gallery-grid">
-                </div>
+        <!-- Gallery View (placeholder) -->
+        <main id="gallery-view" class="p-4 md:p-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600" data-lang="gallery_title">גלריית אפליקציות קהילתית</h2>
+             <!-- Gallery content will be injected here by JS -->
         </main>
     </div>
+    
+    <!-- Modals -->
+    <div id="results-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+         <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full">
+            <h3 class="text-xl font-bold mb-4" data-lang="publish_success_title">האפליקציה פורסמה בהצלחה!</h3>
+            <p><strong>URL:</strong> <a id="result-long-url" href="#" target="_blank" class="text-blue-600 hover:underline break-all"></a></p>
+            <button id="close-results-modal" class="mt-4 bg-gray-200 px-4 py-2 rounded-md">סגור</button>
+        </div>
+    </div>
 
-    <div id="results-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>App Published Successfully!</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <p><strong>Full URL:</strong> <a id="result-long-url" href="#" target="_blank"></a></p>
-            <p><strong>Short URL:</strong> <a id="result-short-url" href="#" target="_blank"></a></p>
-            <div id="qrcode-container"></div>
-        </div>
-    </div>
-    
-    <!-- Loading Spinner Modal -->
-    <div id="loading-modal" class="modal-overlay">
-        <div class="modal-content loading-content">
-            <div class="spinner"></div>
-            <h3>Publishing Your App...</h3>
-            <p>Please wait while we process and publish your application.</p>
-        </div>
-    </div>
-    <div id="preview-modal" class="modal-overlay">
-        <div class="modal-content large">
-             <div class="modal-header">
-                <h3 id="preview-title">Preview</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <iframe id="preview-iframe"></iframe>
-        </div>
-    </div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1/build/qrcode.min.js"></script>
-    <script src="js/firebase-config.js"></script>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- App Logic -->
+    <script src="js/firebase-config.js"></script>
     <script type="module" src="js/studio.js"></script>
 </body>
 </html>
+

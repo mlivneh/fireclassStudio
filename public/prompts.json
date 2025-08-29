@@ -1,0 +1,68 @@
+{
+  "prompts": [
+    {
+      "id": "quiz",
+      "icon": "fas fa-question-circle",
+      "title": {
+        "en": "Quiz / Test",
+        "he": "חידון / מבחן"
+      },
+      "description": {
+        "en": "A series of questions with multiple-choice or text answers.",
+        "he": "סדרה של שאלות עם תשובות רב-ברירתיות או טקסט פתוח."
+      },
+      "base_prompt": {
+        "en": "Create a quiz for [GRADE LEVEL] about [SUBJECT]. The quiz should have [NUMBER] multiple-choice questions. The topic is [TOPIC].",
+        "he": "צור חידון עבור [שכבת גיל] בנושא [מקצוע]. החידון צריך לכלול [מספר] שאלות רב-ברירתיות. הנושא הוא [נושא]."
+      }
+    },
+    {
+      "id": "drag-and-drop",
+      "icon": "fas fa-hand-paper",
+      "title": {
+        "en": "Drag & Drop Game",
+        "he": "משחק גרירה והתאמה"
+      },
+      "description": {
+        "en": "A matching game where users drag items to their correct targets.",
+        "he": "משחק התאמה בו גוררים פריטים למטרות הנכונות שלהם."
+      },
+      "base_prompt": {
+        "en": "Create a drag and drop matching game. The items to drag are [ITEM 1, ITEM 2, ITEM 3] and the targets are [TARGET 1, TARGET 2, TARGET 3]. The theme is [THEME].",
+        "he": "צור משחק התאמה של גרירה ושחרור. הפריטים לגרירה הם [פריט 1, פריט 2, פריט 3] והמטרות הן [מטרה 1, מטרה 2, מטרה 3]. הנושא הוא [נושא]."
+      }
+    },
+    {
+      "id": "story",
+      "icon": "fas fa-book-open",
+      "title": {
+        "en": "Interactive Story",
+        "he": "סיפור אינטראקטיבי"
+      },
+      "description": {
+        "en": "A story where the user makes choices that change the outcome.",
+        "he": "סיפור בו המשתמש מבצע בחירות שמשפיעות על התוצאה."
+      },
+      "base_prompt": {
+        "en": "Create a short interactive story for [AGE GROUP] about [STORY SUBJECT]. The story should have at least two decision points for the reader.",
+        "he": "צור סיפור אינטראקטיבי קצר עבור [קבוצת גיל] על [נושא הסיפור]. הסיפור צריך להכיל לפחות שתי נקודות החלטה עבור הקורא."
+      }
+    },
+    {
+      "id": "simulation",
+      "icon": "fas fa-flask",
+      "title": {
+        "en": "Simple Simulation",
+        "he": "סימולציה פשוטה"
+      },
+      "description": {
+        "en": "A basic simulation of a process with interactive controls.",
+        "he": "הדמיה בסיסית של תהליך עם בקרים אינטראקטיביים."
+      },
+      "base_prompt": {
+        "en": "Create a simple simulation of [PROCESS, e.g., plant growth]. The user should be able to control [CONTROL 1, e.g., amount of water] and [CONTROL 2, e.g., amount of sunlight] and see the result.",
+        "he": "צור סימולציה פשוטה של [תהליך, למשל: צמיחת צמח]. המשתמש צריך להיות מסוגל לשלוט ב[בקר 1, למשל: כמות המים] וב[בקר 2, למשל: כמות אור השמש] ולראות את התוצאה."
+      }
+    }
+  ]
+}

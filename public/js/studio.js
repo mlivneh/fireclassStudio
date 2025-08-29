@@ -1,313 +1,275 @@
 // --- Initialize Firebase ---
-// The 'firebaseConfig' object is loaded from 'js/firebase-config.js'
+// Assumes firebase-config.js is loaded in HTML
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const functions = firebase.functions();
 const firestore = firebase.firestore();
 
+// --- I18N Translations ---
+const translations = {
+    en: {
+        login_title: "Vibe Studio",
+        login_prompt: "Enter your email to get a secure sign-in link.",
+        send_link_btn: "Send Link",
+        studio_title: "Vibe Studio",
+        gallery_btn: "Gallery",
+        logout_btn: "Logout",
+        app_details_title: "1. App Details",
+        app_name_label: "App Name",
+        grade_level_label: "Grade Level",
+        domain_label: "Domain",
+        sub_domain_label: "Sub-domain",
+        pedagogy_label: "Pedagogical Explanation",
+        ai_prompt_title: "2. Describe Your Applet",
+        ai_prompt_placeholder: "e.g., Create a game for 3rd grade to practice addition and subtraction up to 100...",
+        generate_btn: "Generate with AI",
+        preview_title: "3. Live Preview",
+        preview_placeholder: "The preview of your applet will appear here...",
+        generated_code_title: "Generated HTML Code:",
+        publish_btn: "Publish to Gallery",
+        loading_ai: "Generating... Please wait...",
+        publish_success_title: "App Published Successfully!",
+        gallery_title: "Community App Gallery",
+    },
+    he: {
+        login_title: "Vibe Studio",
+        login_prompt: "הכנס את המייל לקבלת קישור כניסה מאובטח.",
+        send_link_btn: "שלח קישור",
+        studio_title: "Vibe Studio",
+        gallery_btn: "גלריה",
+        logout_btn: "התנתק",
+        app_details_title: "1. פרטי האפליקציה",
+        app_name_label: "שם האפליקציה",
+        grade_level_label: "שכבת גיל",
+        domain_label: "תחום",
+        sub_domain_label: "תת-תחום",
+        pedagogy_label: "הסבר פדגוגי",
+        ai_prompt_title: "2. תאר את היישומון הרצוי",
+        ai_prompt_placeholder: "לדוגמה: צור משחקון לכיתה ג' לתרגול חיבור וחיסור עד 100...",
+        generate_btn: "צור עם AI",
+        preview_title: "3. תצוגה מקדימה",
+        preview_placeholder: "התצוגה המקדימה של היישומון תופיע כאן...",
+        generated_code_title: "קוד HTML שנוצר:",
+        publish_btn: "פרסם לגלריה",
+        loading_ai: "יוצר... אנא המתן...",
+        publish_success_title: "האפליקציה פורסמה בהצלחה!",
+        gallery_title: "גלריית אפליקציות קהילתית",
+    }
+};
+
+let currentLanguage = 'he';
+let generatedHtmlContent = ''; // Store generated HTML for publishing
+
 // --- DOM Element References ---
 const loginContainer = document.getElementById('login-container');
 const studioContainer = document.getElementById('studio-container');
-const publisherView = document.getElementById('publisher-view');
-const galleryView = document.getElementById('gallery-view');
 const loginForm = document.getElementById('login-form');
 const emailInput = document.getElementById('email-input');
 const sendLinkBtn = document.getElementById('send-link-btn');
 const feedbackMessage = document.getElementById('feedback-message');
 const logoutBtn = document.getElementById('logout-btn');
 const galleryViewBtn = document.getElementById('gallery-view-btn');
-const publisherViewBtn = document.getElementById('publisher-view-btn');
-const pasteTabBtn = document.getElementById('paste-tab-btn');
-const folderTabBtn = document.getElementById('folder-tab-btn');
-const pasteView = document.getElementById('paste-view');
-const folderView = document.getElementById('folder-view');
-const pasteBtn = document.getElementById('paste-btn');
-const htmlInput = document.getElementById('html-input');
-const zipInput = document.getElementById('zip-input');
-const fileList = document.getElementById('file-list');
-const publishHtmlBtn = document.getElementById('publish-html-btn');
-const publishZipBtn = document.getElementById('publish-zip-btn');
-const publishFeedback = document.getElementById('publish-feedback');
-const resultsModal = document.getElementById('results-modal');
-const previewModal = document.getElementById('preview-modal');
-const loadingModal = document.getElementById('loading-modal');
-const galleryGrid = document.getElementById('gallery-grid');
+const langEnBtn = document.getElementById('lang-en-btn');
+const langHeBtn = document.getElementById('lang-he-btn');
 
-// --- 1. Authentication Logic ---
+// Creator & Gallery Views
+const creatorView = document.getElementById('creator-view');
+const galleryView = document.getElementById('gallery-view');
+const aiPromptInput = document.getElementById('ai-prompt-input');
+const generateAiBtn = document.getElementById('generate-ai-btn');
+const loadingSpinner = document.getElementById('loading-spinner');
+const generationResultArea = document.getElementById('generation-result-area');
+const previewIframe = document.getElementById('preview-iframe');
+const previewPlaceholder = document.querySelector('.preview-placeholder');
+const htmlCodeOutput = document.getElementById('html-code-output');
+const publishBtn = document.getElementById('publish-btn');
+const resultsModal = document.getElementById('results-modal');
+const closeResultsModalBtn = document.getElementById('close-results-modal');
+
+// --- Language & View Management ---
+function setLanguage(lang) {
+    currentLanguage = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-lang]').forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+
+    document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-lang-placeholder');
+        if (translations[lang][key]) {
+            element.placeholder = translations[lang][key];
+        }
+    });
+
+    langEnBtn.classList.toggle('bg-blue-100', lang === 'en');
+    langEnBtn.classList.toggle('text-blue-700', lang === 'en');
+    langHeBtn.classList.toggle('bg-blue-100', lang === 'he');
+    langHeBtn.classList.toggle('text-blue-700', lang === 'he');
+}
+
+langEnBtn.addEventListener('click', () => setLanguage('en'));
+langHeBtn.addEventListener('click', () => setLanguage('he'));
+
+galleryViewBtn.addEventListener('click', () => {
+    creatorView.classList.add('hidden');
+    galleryView.classList.remove('hidden');
+    // We would load the gallery here. For now, it's a placeholder.
+});
+
+
+// --- Authentication Logic ---
 auth.onAuthStateChanged(user => {
     if (user) {
-        loginContainer.style.display = 'none';
-        studioContainer.style.display = 'flex';
-        showPublisherView();
+        loginContainer.classList.add('hidden');
+        studioContainer.classList.remove('hidden');
     } else {
-        loginContainer.style.display = 'block';
-        studioContainer.style.display = 'none';
+        loginContainer.classList.remove('hidden');
+        studioContainer.classList.add('hidden');
     }
 });
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const originalBtnText = sendLinkBtn.textContent;
     sendLinkBtn.disabled = true;
-    sendLinkBtn.textContent = 'Sending...';
+    sendLinkBtn.textContent = '...';
     
-    const email = emailInput.value;
-    const actionCodeSettings = {
-        url: window.location.href,
-        handleCodeInApp: true,
-    };
-
     try {
-        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
-        window.localStorage.setItem('emailForSignIn', email);
-        feedbackMessage.textContent = 'Sign-in link sent! Please check your email.';
-        feedbackMessage.className = 'feedback-message feedback-success';
-        feedbackMessage.style.display = 'block';
+        await auth.sendSignInLinkToEmail(emailInput.value, {
+            url: window.location.href,
+            handleCodeInApp: true,
+        });
+        window.localStorage.setItem('emailForSignIn', emailInput.value);
+        feedbackMessage.textContent = 'קישור נשלח! בדוק את המייל.';
+        feedbackMessage.className = 'text-green-600';
     } catch (error) {
         console.error(error);
-        feedbackMessage.textContent = 'Error sending link. Please try again.';
-        feedbackMessage.className = 'feedback-message feedback-error';
-        feedbackMessage.style.display = 'block';
+        feedbackMessage.textContent = 'שגיאה בשליחת הקישור.';
+        feedbackMessage.className = 'text-red-600';
     } finally {
         sendLinkBtn.disabled = false;
-        sendLinkBtn.textContent = 'Send Sign-In Link';
+        sendLinkBtn.textContent = originalBtnText;
     }
 });
 
 if (auth.isSignInWithEmailLink(window.location.href)) {
     let email = window.localStorage.getItem('emailForSignIn');
     if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
+        email = window.prompt('אנא הזן את המייל לאימות');
     }
     if (email) {
         auth.signInWithEmailLink(email, window.location.href)
-            .then(result => window.localStorage.removeItem('emailForSignIn'))
-            .catch(error => {
-                console.error(error);
-                alert("Error: Invalid or expired link.");
-            });
+            .then(() => window.localStorage.removeItem('emailForSignIn'))
+            .catch(error => console.error(error));
     }
 }
 
 logoutBtn.addEventListener('click', () => auth.signOut());
 
-// --- 2. Main View Switching Logic (Publisher <-> Gallery) ---
-function showPublisherView() {
-    publisherView.style.display = 'flex';
-    galleryView.style.display = 'none';
-    publisherViewBtn.classList.add('active');
-    galleryViewBtn.classList.remove('active');
-}
 
-function showGalleryView() {
-    publisherView.style.display = 'none';
-    galleryView.style.display = 'flex';
-    publisherViewBtn.classList.remove('active');
-    galleryViewBtn.classList.add('active');
-    loadGallery();
-}
+// --- AI Generation Logic ---
+generateAiBtn.addEventListener('click', async () => {
+    const prompt = aiPromptInput.value.trim();
+    if (!prompt) {
+        alert('Please enter a description for the applet.');
+        return;
+    }
 
-publisherViewBtn.addEventListener('click', showPublisherView);
-galleryViewBtn.addEventListener('click', showGalleryView);
+    loadingSpinner.classList.remove('hidden');
+    generationResultArea.classList.add('hidden');
+    generateAiBtn.disabled = true;
 
-// --- 3. Upload Tabs Switching Logic (Paste <-> ZIP) ---
-pasteTabBtn.addEventListener('click', () => {
-    pasteTabBtn.classList.add('active');
-    folderTabBtn.classList.remove('active');
-    pasteView.style.display = 'block';
-    folderView.style.display = 'none';
+    try {
+        const askVibeAI = functions.httpsCallable('askVibeAI');
+        const result = await askVibeAI({ prompt: prompt, language: currentLanguage });
+        
+        if (!result.data || !result.data.htmlCode || !result.data.metadata) {
+             throw new Error("Invalid response structure from AI function.");
+        }
+        const { htmlCode, metadata } = result.data;
+        
+        // Populate form and preview
+        document.getElementById('app-name').value = metadata.appName || '';
+        document.getElementById('grade-level').value = metadata.gradeLevel || '';
+        document.getElementById('domain-input').value = metadata.domain || '';
+        document.getElementById('sub-domain-input').value = metadata.subDomain || '';
+        document.getElementById('pedagogy').value = metadata.pedagogicalExplanation || '';
+        
+        htmlCodeOutput.value = htmlCode || '';
+        generatedHtmlContent = htmlCode || ''; // Store for publishing
+
+        previewIframe.srcdoc = generatedHtmlContent; 
+        previewPlaceholder.classList.add('hidden');
+        previewIframe.classList.remove('hidden');
+        
+        generationResultArea.classList.remove('hidden');
+
+    } catch (error) {
+        console.error("Error calling askVibeAI function:", error);
+        alert(`Error generating app: ${error.message}`);
+    } finally {
+        loadingSpinner.classList.add('hidden');
+        generateAiBtn.disabled = false;
+    }
 });
 
-folderTabBtn.addEventListener('click', () => {
-    folderTabBtn.classList.add('active');
-    pasteTabBtn.classList.remove('active');
-    folderView.style.display = 'block';
-    pasteView.style.display = 'none';
-});
 
-// --- 4. Publishing Logic ---
-
-// Helper to get common form data
-function getFormData() {
-    let schoolCode = document.getElementById('school-code').value.trim();
-    if (schoolCode === "") schoolCode = "00000";
-    
-    return {
+// --- Publishing Logic ---
+publishBtn.addEventListener('click', async () => {
+    const appData = {
         appName: document.getElementById('app-name').value.trim(),
         gradeLevel: document.getElementById('grade-level').value.trim(),
-        schoolCode: schoolCode,
+        domain: document.getElementById('domain-input').value.trim(),
+        subDomain: document.getElementById('sub-domain-input').value.trim(),
         pedagogy: document.getElementById('pedagogy').value.trim(),
-        instructions: document.getElementById('instructions').value.trim(),
+        htmlContent: generatedHtmlContent,
+        // Add other fields if necessary, e.g., school code, instructions
+        schoolCode: "00000", // Default or from a form field
+        instructions: "" // Default or from a form field
     };
-}
 
-// A. Publish Pasted HTML
-publishHtmlBtn.addEventListener('click', async () => {
-    const appData = getFormData();
-    appData.htmlContent = htmlInput.value.trim();
-
-    if (!appData.appName || !appData.htmlContent) {
-        alert("App Name and HTML content are required.");
+    if (!appData.appName || !generatedHtmlContent) {
+        alert('App Name and generated content are required.');
         return;
     }
-    await publish('publishHtml', appData);
-});
+    const originalBtnText = publishBtn.querySelector('span').textContent;
+    publishBtn.disabled = true;
+    publishBtn.querySelector('span').textContent = '...';
 
-// B. Publish Zipped Folder
-let selectedZipFile = null;
-zipInput.addEventListener('change', (e) => {
-    selectedZipFile = e.target.files[0];
-    if(selectedZipFile) {
-        fileList.textContent = `File selected: ${selectedZipFile.name}`;
-    }
-});
-
-publishZipBtn.addEventListener('click', () => {
-    if (!selectedZipFile) {
-        alert("Please select a ZIP file.");
-        return;
-    }
-    const appData = getFormData();
-    if (!appData.appName) {
-        alert("App Name is required.");
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.readAsDataURL(selectedZipFile);
-    reader.onloadend = async () => {
-        appData.zipFileBase64 = reader.result.split(',')[1];
-        await publish('publishZip', appData);
-    };
-});
-
-// C. Generic Publish Function
-async function publish(functionName, appData) {
-    // Show loading spinner
-    loadingModal.style.display = 'flex';
-    
-    publishFeedback.textContent = 'Publishing... Please wait...';
-    publishFeedback.style.color = 'var(--text-color)';
-    
     try {
-        const callableFunction = functions.httpsCallable(functionName);
-        const result = await callableFunction(appData);
+        // Reusing the existing publishHtml cloud function
+        const publishHtml = functions.httpsCallable('publishHtml');
+        const result = await publishHtml(appData);
 
         if (result.data.success) {
-            // Hide loading spinner
-            loadingModal.style.display = 'none';
-            showResultsModal(result.data);
-            publishFeedback.textContent = '';
+            document.getElementById('result-long-url').href = result.data.longUrl;
+            document.getElementById('result-long-url').textContent = result.data.longUrl;
+            resultsModal.classList.remove('hidden');
+            resultsModal.classList.add('flex');
         } else {
-            throw new Error(result.data.error || 'Unknown error occurred.');
+            throw new Error(result.data.error || 'Unknown publishing error.');
         }
+
     } catch (error) {
-        console.error("Error publishing: ", error);
-        // Hide loading spinner
-        loadingModal.style.display = 'none';
-        publishFeedback.textContent = `Error: ${error.message}`;
-        publishFeedback.style.color = 'var(--error-color)';
-    }
-}
-
-// --- 5. Modal and Gallery Logic ---
-
-// Show results after publishing
-function showResultsModal({ longUrl, shortUrl }) {
-    document.getElementById('result-long-url').href = longUrl;
-    document.getElementById('result-long-url').textContent = longUrl;
-    document.getElementById('result-short-url').href = shortUrl;
-    document.getElementById('result-short-url').textContent = shortUrl;
-    
-    const qrContainer = document.getElementById('qrcode-container');
-    qrContainer.innerHTML = '';
-    QRCode.toCanvas(longUrl, { width: 200 }, (err, canvas) => {
-        if (err) console.error(err);
-        qrContainer.appendChild(canvas);
-    });
-    
-    resultsModal.style.display = 'flex';
-}
-
-// Close modals
-resultsModal.querySelector('.modal-close').addEventListener('click', () => resultsModal.style.display = 'none');
-previewModal.querySelector('.modal-close').addEventListener('click', () => {
-    previewModal.style.display = 'none';
-    document.getElementById('preview-iframe').src = 'about:blank'; // Stop content
-});
-
-// Load apps into the gallery
-async function loadGallery() {
-    galleryGrid.innerHTML = 'Loading apps...';
-    try {
-        const querySnapshot = await firestore.collection("community_apps").orderBy("createdAt", "desc").limit(20).get();
-        galleryGrid.innerHTML = '';
-        if (querySnapshot.empty) {
-            galleryGrid.innerHTML = 'No apps found in the gallery yet.';
-            return;
-        }
-        querySnapshot.forEach(doc => {
-            const app = doc.data();
-            const card = document.createElement('div');
-            card.className = 'app-card';
-            card.innerHTML = `
-                <h4>${app.appName}</h4>
-                <p><strong>Grade:</strong> ${app.gradeLevel}</p>
-                <p><strong>By:</strong> ${app.teacher_name}</p>
-                <div class="app-card-actions">
-                    <button class="btn btn-secondary preview-btn" data-url="${app.app_url}" data-name="${app.appName}">Preview</button>
-                    <button class="btn btn-secondary download-btn" data-url="${app.app_url}" data-name="${app.appName}">Download</button>
-                </div>
-            `;
-            galleryGrid.appendChild(card);
-        });
-    } catch (error) {
-        console.error("Error loading gallery:", error);
-        galleryGrid.innerHTML = 'Failed to load apps.';
-    }
-}
-
-// Handle clicks on gallery buttons (Preview/Download)
-galleryGrid.addEventListener('click', async (e) => {
-    const button = e.target;
-    const url = button.dataset.url;
-    const name = button.dataset.name;
-
-    if (button.classList.contains('preview-btn')) {
-        document.getElementById('preview-title').textContent = `Preview: ${name}`;
-        document.getElementById('preview-iframe').src = url;
-        previewModal.style.display = 'flex';
-    }
-    
-    if (button.classList.contains('download-btn')) {
-        button.textContent = 'Downloading...';
-        button.disabled = true;
-        try {
-            const isZip = url.includes('.zip'); // Simple check if the source was a zip
-            // We need a proxy function to download content to bypass browser security (CORS)
-            const downloadProxy = functions.httpsCallable('downloadSource');
-            const result = await downloadProxy({ url: url, isZip: isZip });
-            
-            const blob = new Blob([result.data.content], { type: isZip ? 'application/zip' : 'text/html' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = isZip ? `${name}.zip` : `${name}.html`;
-            link.click();
-            URL.revokeObjectURL(link.href);
-        } catch(error) {
-            console.error("Download failed:", error);
-            alert("Could not download the file.");
-        } finally {
-            button.textContent = 'Download';
-            button.disabled = false;
-        }
+        console.error("Error publishing:", error);
+        alert(`Failed to publish: ${error.message}`);
+    } finally {
+        publishBtn.disabled = false;
+        publishBtn.querySelector('span').textContent = originalBtnText;
     }
 });
 
-// Paste from clipboard helper
-pasteBtn.addEventListener('click', async () => {
-    try {
-        htmlInput.value = await navigator.clipboard.readText();
-    } catch (err) {
-        alert('Could not paste from clipboard. Please paste manually.');
-    }
+closeResultsModalBtn.addEventListener('click', () => {
+    resultsModal.classList.add('hidden');
+    resultsModal.classList.remove('flex');
 });
+
+
+// --- Initial Setup ---
+setLanguage('he'); // Set default language to Hebrew
+
