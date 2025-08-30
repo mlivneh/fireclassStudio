@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Auth Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; }
+        input { font-size: 1.2em; padding: 5px; }
+        button { font-size: 1.2em; padding: 5px; }
+        #status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Firebase Auth Test Page</h1>
+    <div id="login-view">
+        <h3>Send Magic Link</h3>
+        <input type="email" id="email-input" placeholder="Enter your email">
+        <button id="send-link-btn">Send Link</button>
+    </div>
+    <div id="status">Status: Not logged in</div>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const emailInput = document.getElementById('email-input');
+        const sendLinkBtn = document.getElementById('send-link-btn');
+        const statusDiv = document.getElementById('status');
+
+        // --- 1. Auth State Listener ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log("SUCCESS: User is signed in.", user);
+                statusDiv.textContent = `Status: Logged in as ${user.email}`;
+                statusDiv.style.color = 'green';
+            } else {
+                console.log("INFO: User is signed out.");
+                statusDiv.textContent = 'Status: Not logged in';
+                statusDiv.style.color = 'red';
+            }
+        });
+
+        // --- 2. Send Link Logic ---
+        sendLinkBtn.addEventListener('click', () => {
+            const email = emailInput.value;
+            if (!email) {
+                alert("Please enter an email.");
+                return;
+            }
+
+            const actionCodeSettings = {
+                url: window.location.href, // We complete the sign-in on this same test page
+                handleCodeInApp: true,
+            };
+
+            console.log("Attempting to send sign-in link to:", email);
+            auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                .then(() => {
+                    console.log("SUCCESS: Link sent. Check your email.");
+                    alert("Link sent! Please check your email and click the link to sign in.");
+                    window.localStorage.setItem('emailForSignIn', email);
+                })
+                .catch((error) => {
+                    console.error("ERROR SENDING LINK:", error);
+                    alert(`Failed to send link: ${error.message}`);
+                });
+        });
+
+        // --- 3. Handle Link Click Return ---
+        if (auth.isSignInWithEmailLink(window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            if (!email) {
+                email = window.prompt('Please provide your email for confirmation');
+            }
+
+            console.log("Attempting to sign in with email link...");
+            auth.signInWithEmailLink(email, window.location.href)
+                .then((result) => {
+                    console.log("SUCCESS: Signed in with link.", result);
+                    window.localStorage.removeItem('emailForSignIn');
+                })
+                .catch((error) => {
+                    console.error("ERROR SIGNING IN:", error);
+                    alert(`Failed to sign in: ${error.message}`);
+                });
+        }
+    </script>
+</body>
+</html>

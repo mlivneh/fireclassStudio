@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>תרגול חיבור דו־ספרתי — 10 תרגילים</title>
+<style>
+  :root { --ok:#17a34a; --bad:#dc2626; --ink:#0f172a; --muted:#64748b; --card:#ffffff; --bg:#f6f7fb; --accent:#2563eb; }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,Segoe UI,Arial,Helvetica;}
+  .wrap{max-width:720px;margin:24px auto;padding:20px;}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 8px 20px rgba(15,23,42,.08);padding:20px;}
+  h1{margin:0 0 4px;font-size:clamp(20px,2.6vw,28px)}
+  p.lead{margin:0 0 16px;color:var(--muted)}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}
+  button{border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}
+  .check{background:var(--accent);color:#fff}
+  .again{background:#e2e8f0;color:#0f172a}
+  .score{margin-inline-start:auto;font-weight:700}
+  .grid{display:grid;grid-template-columns:1fr auto auto 110px auto;gap:10px;align-items:center}
+  .grid .hdr{font-weight:700;color:var(--muted);padding-block:6px}
+  .row{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;display:grid;grid-template-columns:subgrid;grid-column:1/-1}
+  .expr{font-variant-numeric:tabular-nums}
+  input[type="number"]{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:10px;font-size:16px}
+  input[type="number"]:focus{outline:3px solid rgba(37,99,235,.25);border-color:var(--accent)}
+  .tag{font-size:13px;padding:4px 8px;border-radius:999px}
+  .ok{color:var(--ok);background:#dcfce7}
+  .bad{color:var(--bad);background:#fee2e2}
+  .hint{color:var(--muted);font-size:13px}
+  .foot{margin-top:8px;color:var(--muted);font-size:13px}
+  .fade{animation:fade .25s ease}
+  @keyframes fade{from{opacity:.001;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card fade">
+      <h1>תרגול חיבור מספרים דו־ספרתיים</h1>
+      <p class="lead">10 תרגילים אקראיים. מזינים תשובה, לוחצים “בדיקה”, ומקבלים ניקוד ומשוב.</p>
+
+      <div class="controls">
+        <button class="check" id="checkBtn">בדיקה</button>
+        <button class="again" id="againBtn">התחל מחדש</button>
+        <div class="score" id="scoreBox" aria-live="polite">ניקוד: 0/10</div>
+      </div>
+
+      <div class="grid" role="table" aria-label="תרגילי חיבור">
+        <div class="hdr">תרגיל</div>
+        <div class="hdr">=</div>
+        <div class="hdr">תשובה</div>
+        <div class="hdr">משוב</div>
+        <div class="hdr">פתרון</div>
+
+        <div id="rows" class="grid" style="grid-column:1/-1"></div>
+      </div>
+
+      <div class="foot">טיפ: אפשר לנווט בין התשובות עם Enter. במספר האחרון Enter יבצע בדיקה.</div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const COUNT = 10;
+  const rowsEl = document.getElementById('rows');
+  const scoreBox = document.getElementById('scoreBox');
+  const checkBtn = document.getElementById('checkBtn');
+  const againBtn = document.getElementById('againBtn');
+
+  let problems = []; // {a,b,sum,inputEl,tagEl,solEl}
+  let checked = false;
+
+  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  function genProblems() {
+    problems = [];
+    rowsEl.innerHTML = '';
+    const seen = new Set();
+
+    while (problems.length < COUNT) {
+      const a = rand(10, 99), b = rand(10, 99);
+      const key = (a <= b ? a + '+' + b : b + '+' + a);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const sum = a + b;
+
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const expr = document.createElement('div');
+      expr.className = 'expr';
+      expr.textContent = `${a} + ${b}`;
+
+      const eq = document.createElement('div'); eq.textContent = '=';
+
+      const inpBox = document.createElement('div');
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.inputMode = 'numeric'; inp.placeholder = '—';
+      inp.setAttribute('aria-label', `תשובה ל ${a} ועוד ${b}`);
+      inp.min = '0'; inp.max = '198';
+      inpBox.appendChild(inp);
+
+      const tag = document.createElement('div');
+      const tagSpan = document.createElement('span');
+      tagSpan.className = 'tag'; tag.appendChild(tagSpan);
+
+      const sol = document.createElement('div');
+      const solSpan = document.createElement('span');
+      solSpan.className = 'hint'; sol.appendChild(solSpan);
+
+      row.append(expr, eq, inpBox, tag, sol);
+      rowsEl.appendChild(row);
+
+      problems.push({ a, b, sum, inputEl: inp, tagEl: tagSpan, solEl: solSpan });
+    }
+
+    // Enter navigation + last Enter triggers check
+    problems.forEach((p, i) => {
+      p.inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (i < problems.length - 1) {
+            problems[i + 1].inputEl.focus();
+            problems[i + 1].inputEl.select?.();
+          } else {
+            checkAll();
+          }
+        }
+      });
+    });
+
+    checked = false;
+    scoreBox.textContent = `ניקוד: 0/${COUNT}`;
+    problems[0]?.inputEl.focus();
+  }
+
+  function checkAll() {
+    let score = 0;
+    problems.forEach(({ sum, inputEl, tagEl, solEl }) => {
+      const val = Number(inputEl.value.trim());
+      const ok = Number.isFinite(val) && val === sum;
+
+      tagEl.textContent = ok ? '✓ נכון' : '✗ שגוי';
+      tagEl.className = `tag ${ok ? 'ok' : 'bad'}`;
+      solEl.textContent = ok ? '' : `התשובה הנכונה: ${sum}`;
+      if (ok) score++;
+    });
+    scoreBox.textContent = `ניקוד: ${score}/${COUNT}`;
+    checked = true;
+  }
+
+  checkBtn.addEventListener('click', checkAll);
+  againBtn.addEventListener('click', genProblems);
+
+  genProblems();
+})();
+</script>
+</body>
+</html>

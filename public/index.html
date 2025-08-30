@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif; }
+        .hidden { display: none; }
+        [dir="rtl"] .form-input { text-align: right; }
+        .card-base {
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            border: 2px solid transparent;
+        }
+        .card-base:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-base.selected {
+            border-color: #3b82f6; /* blue-500 */
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Login Container -->
+    <div id="login-container" class="min-h-screen flex items-center justify-center">
+        <!-- Login content remains the same -->
+        <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+            <h1 class="text-2xl font-bold text-center text-blue-600 mb-2" data-lang="login_title">Vibe Studio</h1>
+            <p class="text-center text-gray-600 mb-6" data-lang="login_prompt">הכנס את המייל לקבלת קישור כניסה מאובטח.</p>
+            <form id="login-form">
+                <input type="email" id="email-input" class="w-full p-3 border border-gray-300 rounded-md mb-4 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="your@email.com" required>
+                <button type="submit" id="send-link-btn" class="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors" data-lang="send_link_btn">שלח קישור</button>
+            </form>
+            <div id="feedback-message" class="mt-4 text-center"></div>
+        </div>
+    </div>
+
+    <!-- Main Studio Container -->
+    <div id="studio-container" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <!-- Header content remains the same -->
+             <h1 class="text-xl font-bold text-blue-600" data-lang="studio_title">Vibe Studio</h1>
+            <div class="flex items-center space-x-4">
+                 <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                    <button id="lang-en-btn" class="px-3 py-1 text-sm rounded-md">EN</button>
+                    <button id="lang-he-btn" class="px-3 py-1 text-sm rounded-md bg-blue-100 text-blue-700">HE</button>
+                </div>
+                <button id="gallery-view-btn" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md" data-lang="gallery_btn">גלריה</button>
+                <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" data-lang="logout_btn">התנתק</button>
+            </div>
+        </header>
+
+        <!-- AI Creator View -->
+        <main id="creator-view" class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Panel: Generated App Details -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-bold mb-4 border-b pb-2" data-lang="app_details_title">פרטי האפליקציה</h2>
+                <!-- Form for auto-populated data -->
+                 <div class="space-y-4">
+                    <div>
+                        <label for="app-name" class="block text-sm font-medium text-gray-700" data-lang="app_name_label">שם האפליקציה</label>
+                        <input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                     <div>
+                        <label for="grade-level" class="block text-sm font-medium text-gray-700" data-lang="grade_level_label">שכבת גיל</label>
+                        <input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="domain-input" class="block text-sm font-medium text-gray-700" data-lang="domain_label">תחום</label>
+                        <input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="sub-domain-input" class="block text-sm font-medium text-gray-700" data-lang="sub_domain_label">תת-תחום</label>
+                        <input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                    </div>
+                     <div>
+                        <label for="pedagogy" class="block text-sm font-medium text-gray-700" data-lang="pedagogy_label">הסבר פדגוגי</label>
+                        <textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: The Creation Flow -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md space-y-6">
+                <!-- Step 1: Persona Selection -->
+                <div>
+                    <h2 class="text-lg font-bold mb-4" data-lang="persona_select_title">שלב 1: בחר את סגנון ה-AI</h2>
+                    <div id="persona-library" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Personas will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Step 2: Activity Template Selection -->
+                <div>
+                    <h2 class="text-lg font-bold mb-4" data-lang="template_select_title">שלב 2: בחר את סוג הפעילות</h2>
+                    <div id="prompt-library" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Activity templates will be injected here -->
+                    </div>
+                </div>
+                
+                <!-- Step 3: Teacher's Specific Prompt -->
+                <div>
+                    <h2 class="text-lg font-bold mb-2" data-lang="ai_prompt_title">שלב 3: הוסף את הפרטים שלך</h2>
+                    <textarea id="ai-prompt-input" rows="5" class="w-full border-gray-300 rounded-md shadow-sm p-3" placeholder="...מלא את הפרטים מהתבנית והוסף כל בקשה נוספת, למשל: 'שיהיה משחק מצחיק עם דמויות של חיות'"></textarea>
+                    <button id="generate-ai-btn" class="mt-2 w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
+                        <span data-lang="generate_btn">צור עם AI</span>
+                    </button>
+                </div>
+
+                <!-- Step 4: Preview and Publish -->
+                <div id="generation-result-area" class="hidden">
+                     <h2 class="text-lg font-bold mb-2" data-lang="preview_title">שלב 4: תצוגה מקדימה ופרסום</h2>
+                    <!-- Preview and publish elements remain the same -->
+                     <div id="preview-container" class="w-full h-96 border rounded-md shadow-inner overflow-hidden">
+                       <iframe id="preview-iframe" class="w-full h-full hidden"></iframe>
+                       <div class="bg-gray-100 flex items-center justify-center h-full text-gray-500">
+                           <p data-lang="preview_placeholder">התצוגה המקדימה תופיע כאן...</p>
+                       </div>
+                    </div>
+                     <button id="publish-btn" class="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-rocket ltr:mr-2 rtl:ml-2"></i>
+                        <span data-lang="publish_btn">פרסם לגלריה</span>
+                    </button>
+                </div>
+                 <div id="loading-spinner" class="hidden text-center p-8">
+                    <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
+                    <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Gallery and Modals remain the same -->
+    </div>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- App Logic -->
+    <script src="js/firebase-config.js"></script>
+    <script type="module" src="js/studio.js"></script>
+</body>
+</html>
