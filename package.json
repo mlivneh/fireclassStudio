@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "firebase": "^12.1.0",
-    "netlify": "^23.4.0"
-  }
-}

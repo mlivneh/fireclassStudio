@@ -1,6 +1,6 @@
 # Vibe Studio – Version 2.0 Specification
 
-**Last Updated:** August 30, 2025  
+**Last Updated:** August 31, 2025  
 **Status:** In Development
 
 ---
@@ -31,6 +31,7 @@ The system is fully **bilingual (Hebrew & English)**, including the interface an
 - **Serverless Logic:** Firebase Cloud Functions
 - **File Storage:** Firebase Cloud Storage (HTML applets with secure download tokens)
 - **AI Model:** Google Gemini API (`gemini-1.5-flash`) with structured JSON output
+- **FireClass Integration:** Direct Firestore access via Service Account
 
 ---
 
@@ -137,12 +138,27 @@ Both support bilingual content (English/Hebrew).
 ## 8. Publishing Workflow
 
 ### 8.1 Publish Function (publishHtml)
-- Saves applet HTML to Firebase Storage at: `apps/{uid}/{timestamp}/index.html`
-- Generates secure public URL with download token
-- Calls TinyURL API for short link
-- Returns `{longUrl, shortUrl}`
+- **Teacher Verification:** Direct Firestore query to FireClass database via Service Account
+- **File Storage:** Saves applet HTML to Firebase Storage at: `apps/{uid}/{timestamp}/index.html`
+- **URL Generation:** Creates secure public URL with download token
+- **Bit.ly Integration:** Generates short link for sharing
+- **Returns:** `{longUrl, shortUrl, qrCodeDataUrl}`
 
-### 8.2 Metadata Storage
+### 8.2 Teacher Verification System
+**New Architecture (v2.0):**
+- **Primary App:** Vibe Studio (admin.initializeApp())
+- **Secondary App:** FireClass (admin.initializeApp({credential: serviceAccount}, 'fireClassApp'))
+- **Direct Access:** Queries FireClass Firestore directly via `teachers` collection
+- **Query Field:** `profile.email` for exact teacher matching
+- **Security:** Uses `FIRECLASS_SERVICE_ACCOUNT` secret for authentication
+
+**Benefits:**
+- No external API dependencies
+- Faster response times
+- More reliable verification
+- Direct database access
+
+### 8.3 Metadata Storage
 **Firestore Collection:** `community_apps`
 
 **Fields:**
@@ -151,7 +167,7 @@ Both support bilingual content (English/Hebrew).
 - `pedagogicalExplanation`, `instructions`
 - `app_url`, `teacher_uid`, `teacher_name`, `createdAt`
 
-### 8.3 Update Function (updateAppDetails)
+### 8.4 Update Function (updateAppDetails)
 Teachers may update app details (only owner can edit).
 
 ---
@@ -159,6 +175,9 @@ Teachers may update app details (only owner can edit).
 ## 9. Security & Permissions
 
 - All Cloud Functions require authenticated users
+- **Teacher Verification:** Direct Firestore access to FireClass database via Service Account
+- **Service Account:** `FIRECLASS_SERVICE_ACCOUNT` secret contains full JSON credentials
+- **Dual App Architecture:** Separate Firebase Admin instances for Studio and FireClass
 - Firestore rules enforce: only the owner (`teacher_uid`) can update their apps
 - Published apps are accessible only via secure download token URLs
 
@@ -171,14 +190,16 @@ Teachers may update app details (only owner can edit).
 - **Accessibility:** Clear labels, loading spinners, bilingual support
 - **Reliability:** AI responses validated against schema
 - **Code Quality:** Generated HTML must be single-file, Tailwind-based, readable, and commented
+- **Teacher Verification:** Sub-second response time for database queries
 
 ---
 
 ## 11. Future Roadmap
 
-### Version 3.0 (FireClass Integration)
-- Auto-sync published apps to teacher's personal FireClass library
+### Version 3.0 (Enhanced FireClass Integration)
+- Real-time sync of published apps to teacher's personal FireClass library
 - Suggest apps to public library pending admin approval
+- Advanced teacher analytics and usage tracking
 
 ### Version 4.0 (Advanced Users)
 - Manual .zip upload option

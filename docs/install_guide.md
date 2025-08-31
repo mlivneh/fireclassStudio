@@ -1,8 +1,8 @@
 # מדריך התקנה והגדרה: פרויקט Vibe Studio
 
-**גרסה: 1.2**
+**גרסה: 2.0 - עם מנגנון FireClass Integration החדש**
 
-מסמך זה מכיל את כל השלבים הנדרשים להקמה מלאה של פרויקט Vibe Studio, מסביבת הענן ועד להרצה מקומית. **עודכן עם פתרונות לכל השגיאות שזוהו במהלך הפיתוח.**
+מסמך זה מכיל את כל השלבים הנדרשים להקמה מלאה של פרויקט Vibe Studio, כולל האינטגרציה החדשה עם FireClass באמצעות Service Account. **עודכן עם המנגנון החדש והבטוח יותר.**
 
 ## שלב 1: הגדרת סביבת הענן ב-Firebase
 
@@ -22,7 +22,7 @@
     * תן כינוי לאפליקציה (למשל, "Vibe Studio Web").
     * **אל תסמן** את התיבה `Firebase Hosting`.
     * בסיום, העתק את אובייקט ה-`firebaseConfig` המלא ושמור אותו בצד.
-5.  **אשר דומיינים (שלב קריטי):**
+5.  **אשר דומיינים (שלב קריטי)**:
     * בלשונית **Authentication -> Settings -> Authorized domains**, לחץ על **Add domain**.
     * הוסף את הדומיינים הבאים, אחד אחרי השני:
         * `localhost`
@@ -30,7 +30,42 @@
 
 ---
 
-## שלב 2: הקמת הפרויקט המקומי
+## שלב 2: הגדרת FireClass Service Account (חדש!)
+
+**שלב זה הכרחי למנגנון החדש - גישה ישירה לפיירסטור של FireClass:**
+
+1.  **היכנס לפרויקט FireClass** במסוף Firebase (לא הסטודיו!).
+2.  **לך ל-Project Settings** (הגלגל שיניים) → **Service accounts**.
+3.  **לחץ על "Generate new private key"**.
+4.  **בחר את החשבון:** `firebase-adminsdk-xxxxx@fireclass.iam.gserviceaccount.com`.
+5.  **הורד את קובץ ה-JSON** - זהו ה-Service Account שלך.
+6.  **שמור את הקובץ** במקום בטוח (אל תעלה אותו לגיט!).
+
+---
+
+## שלב 3: הגדרת Secrets ב-Vibe Studio
+
+1.  **היכנס לפרויקט Vibe Studio** במסוף Firebase.
+2.  **לך ל-Functions → Secrets** (אם לא רואה, השתמש ב-CLI).
+3.  **הגדר את הסודות הבאים:**
+
+    ```bash
+    # הגדר את Service Account של FireClass
+    firebase functions:secrets:set FIRECLASS_SERVICE_ACCOUNT
+    
+    # הגדר את שאר הסודות
+    firebase functions:secrets:set GEMINI_API_KEY
+    firebase functions:secrets:set BITLY_ACCESS_TOKEN
+    ```
+
+4.  **עבור FIRECLASS_SERVICE_ACCOUNT:**
+    - פתח את קובץ ה-JSON שהורדת בשלב 2
+    - העתק את **כל התוכן** (כולל הסוגריים המסולסלות)
+    - הדבק אותו כערך של הסוד
+
+---
+
+## שלב 4: הקמת הפרויקט המקומי
 
 1.  **צור תיקייה חדשה וריקה** במחשב שלך (למשל, `fireclassStudio`).
 2.  **פתח טרמינל בתוך התיקייה החדשה** והרץ `firebase init`.
@@ -46,19 +81,19 @@
 
 ---
 
-## שלב 3: הוספת קוד המקור
+## שלב 5: הוספת קוד המקור
 
 1.  **צור את קבצי המקור** (`public/index.html`, `public/css/style.css`, `public/js/studio.js`, ו-`functions/index.js`) והדבק בהם את הקוד המלא מהשיחה שלנו.
 2.  **הוסף את פרטי התצורה:** פתח את הקובץ `public/js/firebase-config.js` והדבק בו את אובייקט ה-`firebaseConfig` ששמרת בשלב 1.
 
 ---
 
-## שלב 4: התקנת תלויות וקונפיגורציה
+## שלב 6: התקנת תלויות וקונפיגורציה
 
-1.  **התקן תלויות בשרת:**
+1.  **התקן תלויות בשרת**:
     * בטרמינל, נווט לתיקיית `functions` (`cd functions`).
-    * הרץ את הפקודה: `npm install jszip axios`.
-2.  **הגדר את ESLint:**
+    * הרץ את הפקודה: `npm install bitly qrcode`.
+2.  **הגדר את ESLint**:
     * פתח את הקובץ `functions/.eslintrc.js`.
     * בתוך האובייקט `rules`, הוסף את השורות הבאות:
         ```javascript
@@ -69,20 +104,20 @@
 
 ---
 
-## שלב 5: פריסה ובדיקה
+## שלב 7: פריסה ובדיקה
 
-1.  **פרוס את קוד השרת לענן:**
+1.  **פרוס את קוד השרת לענן**:
     ```bash
     firebase deploy --only functions
     ```
-2.  **הרץ את האפליקציה מקומית:**
+2.  **הרץ את האפליקציה מקומית**:
     * התקן `live-server` (אם לא מותקן): `npm install -g live-server`.
     * נווט לתיקיית `public` (`cd public`).
     * הרץ את הפקודה: `live-server`.
 
 ---
 
-## שלב 6: הגדרות לסביבת ייצור (Production)
+## שלב 8: הגדרות לסביבת ייצור (Production)
 
 **חשוב:** כאשר תפרוס את האתר לסביבת הייצור שלך ב-Azure, תצטרך לבצע את הפעולה הבאה כדי שההתחברות תעבוד:
 
@@ -96,7 +131,7 @@
 
 ---
 
-## שלב 7: מנגנון Download Tokens - הפתרון הסופי
+## שלב 9: מנגנון Download Tokens - הפתרון הסופי
 
 **עדכון חשוב:** לאחר ניסיונות רבים עם מנגנונים שונים, המערכת עברה לשימוש ב-**Download Tokens** של Firebase Storage. זהו הפתרון היציב והבטוח ביותר.
 
@@ -124,9 +159,40 @@ Download Tokens הם מנגנון של Firebase Storage שמאפשר גישה ל
 
 ---
 
-## שלב 8 (פתרון תקלות): היסטוריה מלאה של השגיאות והפתרונות
+## שלב 10: מנגנון אימות המורה החדש (FireClass Integration)
 
-### 8.1. שגיאת HttpsError (500 Internal Server Error)
+**המנגנון החדש והבטוח יותר:**
+
+### איך זה עובד:
+
+1. **אפליקציה כפולה:** סטודיו יוצר שתי אפליקציות Firebase Admin:
+   - **אפליקציה ראשית:** לגישה לפיירסטור של סטודיו
+   - **אפליקציה שנייה:** לגישה לפיירסטור של קלאס
+
+2. **Service Account:** משתמש ב-`FIRECLASS_SERVICE_ACCOUNT` לגישה ישירה לפיירסטור של קלאס
+
+3. **בדיקה ישירה:** שואל ישירות ב-`teachers` collection עם `profile.email`
+
+### יתרונות המנגנון החדש:
+
+- **מהיר יותר:** גישה ישירה לפיירסטור
+- **יציב יותר:** לא תלוי ב-API חיצוני
+- **בטוח יותר:** הרשאות מוגדרות היטב
+- **פשוט יותר:** פחות נקודות כשל
+
+### בדיקת המנגנון:
+
+לאחר פריסה, תראה בלוגים:
+```
+🔍 [DB-VERIFY] Starting teacher verification for: teacher@example.com
+🎯 [DB-VERIFY] Verification result for teacher@example.com: Found
+```
+
+---
+
+## שלב 11 (פתרון תקלות): היסטוריה מלאה של השגיאות והפתרונות
+
+### 11.1. שגיאת HttpsError (500 Internal Server Error)
 
 **הבעיה:** שימוש לא נכון בסינטקס של Firebase Functions v2.
 
@@ -145,20 +211,20 @@ const {onCall, HttpsError} = require("firebase-functions/v2/https");
 throw new HttpsError("unauthenticated", "Auth required.");
 ```
 
-### 8.2. בדיקת verifyTeacher כפולה
+### 11.2. בעיות Service Account
 
-**הבעיה:** בדיקה מיותרת של הרשאות מורה בפונקציות publish.
+**הבעיה:** שגיאות בעת ניסיון לגשת לפיירסטור של קלאס.
 
 **הסימפטומים:**
-- לוגים כפולים
-- ביצועים מיותרים
+- שגיאה "CRITICAL: Failed to parse FIRECLASS_SERVICE_ACCOUNT secret"
+- שגיאות הרשאה בעת בדיקת מורה
 
-**הפתרון:** הסרת הבדיקה הכפולה והשארת לוג בלבד:
-```javascript
-console.log(`⚠️ Skipping duplicate verifyTeacher check for ${email}`);
-```
+**הפתרון:**
+1. וודא שה-`FIRECLASS_SERVICE_ACCOUNT` מוגדר נכון
+2. וודא שהערך הוא JSON מלא (כולל סוגריים מסולסלות)
+3. וודא שה-Service Account יש לו הרשאות לקרוא לפיירסטור של קלאס
 
-### 8.3. בעיות הרשאות Cloud Storage (הבעיה המרכזית)
+### 11.3. בעיות הרשאות Cloud Storage (הבעיה המרכזית)
 
 **הבעיה:** שגיאות 500 עקב בעיות IAM עם makePublic() ו-publicUrl().
 
@@ -191,7 +257,7 @@ await file.save(htmlContent, {
 const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
 ```
 
-### 8.4. אתחול Firebase Admin SDK
+### 11.4. אתחול Firebase Admin SDK
 
 **הבעיה:** אי-ודאות לגבי הגדרת storageBucket באתחול.
 
@@ -202,7 +268,7 @@ const bucket = admin.storage().bucket();
 console.log(`🚀 Firebase Admin initialized with bucket: ${bucket.name}`);
 ```
 
-### 8.5. URL Parsing ב-downloadCode
+### 11.5. URL Parsing ב-downloadCode
 
 **הבעיה:** תמיכה בפורמטים שונים של URLs.
 
@@ -220,7 +286,7 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 
 ---
 
-## שלב 9: בדיקה וניטור
+## שלב 12: בדיקה וניטור
 
 ### בדיקת הפונקציות
 
@@ -230,7 +296,8 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 2. **חפש הודעות:**
    - `🚀 Firebase Admin initialized with bucket: fireclassstudio.firebasestorage.app`
    - `📦 Bucket: fireclassstudio.firebasestorage.app, FilePath: apps/...`
-   - `⚠️ Skipping duplicate verifyTeacher check for...`
+   - `🔍 [DB-VERIFY] Starting teacher verification for...`
+   - `🎯 [DB-VERIFY] Verification result for...: Found`
 
 ### בדיקת Storage
 
@@ -245,6 +312,12 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 https://firebasestorage.googleapis.com/v0/b/fireclassstudio.firebasestorage.app/o/apps%2Fuid%2Ftimestamp%2Findex.html?alt=media&token=uuid
 ```
 
+### בדיקת אימות המורה
+
+1. **נסה להיכנס עם מורה רשום בקלאס**
+2. **בדוק בלוגים:** `🎯 [DB-VERIFY] Verification result for...: Found`
+3. **אם יש שגיאה:** בדוק את ה-`FIRECLASS_SERVICE_ACCOUNT`
+
 ---
 
 ## סיכום הפתרונות
@@ -255,5 +328,15 @@ https://firebasestorage.googleapis.com/v0/b/fireclassstudio.firebasestorage.app/
 - ❌ **Signed URLs** → ✅ **Download Tokens**
 - ❌ **HttpsError שגוי** → ✅ **HttpsError נכון**
 - ❌ **אתחול לא ברור** → ✅ **אתחול מפורש**
+- ❌ **API חיצוני** → ✅ **גישה ישירה לפיירסטור של קלאס**
 
-**התוצאה:** מערכת יציבה, מהירה, ובטוחה ללא בעיות הרשאות! 🚀
+**התוצאה:** מערכת יציבה, מהירה, ובטוחה עם אינטגרציה מלאה של FireClass! 🚀
+
+---
+
+## הערות חשובות
+
+1. **אל תעלה את קובץ ה-Service Account לגיט!** הוא מכיל מפתחות פרטיים.
+2. **וודא שה-Service Account יש לו הרשאות לקרוא לפיירסטור של קלאס.**
+3. **אחרי כל שינוי בקוד, תצטרך לפרוס מחדש את הפונקציות.**
+4. **המנגנון החדש עובד רק עם מורים רשומים בקלאס.**

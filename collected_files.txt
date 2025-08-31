@@ -8,7 +8,7 @@ Target folders: public, function, docs
 ========================================================================================================================
 FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\index.html
 TYPE: .html
-SIZE: 9176 characters
+SIZE: 10361 characters
 FOLDER: public
 ========================================================================================================================
 
@@ -37,13 +37,17 @@ FOLDER: public
             transform: translateY(-2px);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
+        /* Tab styling */
+        .tab-button.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
 
-    <!-- Login Container -->
     <div id="login-container" class="min-h-screen flex items-center justify-center">
-        <!-- Login content remains the same -->
         <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
             <h1 class="text-2xl font-bold text-center text-blue-600 mb-2" data-lang="login_title">Vibe Studio</h1>
             <p class="text-center text-gray-600 mb-6" data-lang="login_prompt">הכנס את המייל לקבלת קישור כניסה מאובטח.</p>
@@ -55,10 +59,8 @@ FOLDER: public
         </div>
     </div>
 
-    <!-- Main Studio Container -->
     <div id="studio-container" class="hidden">
         <header class="bg-white shadow-md p-4 flex justify-between items-center">
-            <!-- Header content remains the same -->
              <h1 class="text-xl font-bold text-blue-600" data-lang="studio_title">Vibe Studio</h1>
             <div class="flex items-center space-x-4">
                  <div class="flex items-center space-x-2 rtl:space-x-reverse">
@@ -70,101 +72,111 @@ FOLDER: public
             </div>
         </header>
 
-        <!-- AI Creator View -->
-        <main id="creator-view" class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Panel: Generated App Details -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-lg font-bold mb-4 border-b pb-2" data-lang="app_details_title">פרטי האפליקציה</h2>
-                <!-- Form for auto-populated data -->
-                 <div class="space-y-4">
-                    <div>
-                        <label for="app-name" class="block text-sm font-medium text-gray-700" data-lang="app_name_label">שם האפליקציה</label>
-                        <input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                    </div>
-                     <div>
-                        <label for="grade-level" class="block text-sm font-medium text-gray-700" data-lang="grade_level_label">שכבת גיל</label>
-                        <input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                    </div>
-                    <div>
-                        <label for="domain-input" class="block text-sm font-medium text-gray-700" data-lang="domain_label">תחום</label>
-                        <input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                    </div>
-                    <div>
-                        <label for="sub-domain-input" class="block text-sm font-medium text-gray-700" data-lang="sub_domain_label">תת-תחום</label>
-                        <input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                    </div>
-                     <div>
-                        <label for="pedagogy" class="block text-sm font-medium text-gray-700" data-lang="pedagogy_label">הסבר פדגוגי</label>
-                        <textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea>
-                    </div>
-                </div>
+        <main class="p-4 md:p-8">
+            <div class="mb-6 border-b border-gray-200">
+                <nav class="-mb-px flex space-x-4 rtl:space-x-reverse" aria-label="Tabs">
+                    <button id="tab-creator" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">שלב 1: יצירה</button>
+                    <button id="tab-preview" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">שלב 2: תצוגה מקדימה</button>
+                    <button id="tab-publish" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">שלב 3: פרטים ופרסום</button>
+                </nav>
             </div>
 
-            <!-- Right Panel: The Creation Flow -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md space-y-6">
-                <!-- Step 1: Persona Selection -->
-                <div>
-                    <h2 class="text-lg font-bold mb-4" data-lang="persona_select_title">שלב 1: בחר את סגנון ה-AI</h2>
-                    <div id="persona-library" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <!-- Personas will be injected here -->
+            <div>
+                <div id="content-creator" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+                        <div>
+                            <h2 class="text-lg font-bold mb-4">שלב 1: בחר את סגנון ה-AI</h2>
+                            <div id="persona-library" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold mb-4">שלב 2: בחר את סוג הפעילות</h2>
+                            <div id="prompt-library" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-lg font-bold mb-2">שלב 3: הוסף את הפרטים שלך</h2>
+                        <textarea id="ai-prompt-input" rows="10" class="w-full border-gray-300 rounded-md shadow-sm p-3" placeholder="...מלא את הפרטים מהתבנית והוסף כל בקשה נוספת, למשל: 'שיהיה משחק מצחיק עם דמויות של חיות'"></textarea>
+                        <button id="generate-ai-btn" class="mt-4 w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
+                            <span data-lang="generate_btn">צור עם AI</span>
+                        </button>
+                         <div id="loading-spinner" class="hidden text-center p-8">
+                            <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
+                            <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Step 2: Activity Template Selection -->
-                <div>
-                    <h2 class="text-lg font-bold mb-4" data-lang="template_select_title">שלב 2: בחר את סוג הפעילות</h2>
-                    <div id="prompt-library" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <!-- Activity templates will be injected here -->
+                <div id="content-preview" class="hidden">
+                     <div id="preview-container" class="w-full h-[70vh] border rounded-md shadow-inner overflow-hidden bg-white">
+                       <iframe id="preview-iframe" class="w-full h-full"></iframe>
                     </div>
-                </div>
-                
-                <!-- Step 3: Teacher's Specific Prompt -->
-                <div>
-                    <h2 class="text-lg font-bold mb-2" data-lang="ai_prompt_title">שלב 3: הוסף את הפרטים שלך</h2>
-                    <textarea id="ai-prompt-input" rows="5" class="w-full border-gray-300 rounded-md shadow-sm p-3" placeholder="...מלא את הפרטים מהתבנית והוסף כל בקשה נוספת, למשל: 'שיהיה משחק מצחיק עם דמויות של חיות'"></textarea>
-                    <button id="generate-ai-btn" class="mt-2 w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
-                        <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
-                        <span data-lang="generate_btn">צור עם AI</span>
-                    </button>
                 </div>
 
-                <!-- Step 4: Preview and Publish -->
-                <div id="generation-result-area" class="hidden">
-                     <h2 class="text-lg font-bold mb-2" data-lang="preview_title">שלב 4: תצוגה מקדימה ופרסום</h2>
-                    <!-- Preview and publish elements remain the same -->
-                     <div id="preview-container" class="w-full h-96 border rounded-md shadow-inner overflow-hidden">
-                       <iframe id="preview-iframe" class="w-full h-full hidden"></iframe>
-                       <div class="bg-gray-100 flex items-center justify-center h-full text-gray-500">
-                           <p data-lang="preview_placeholder">התצוגה המקדימה תופיע כאן...</p>
-                       </div>
+                <div id="content-publish" class="hidden bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+                    <h2 class="text-lg font-bold mb-4 border-b pb-2">פרטי האפליקציה</h2>
+                     <div class="space-y-4">
+                        <div>
+                            <label for="app-name" class="block text-sm font-medium text-gray-700">שם האפליקציה</label>
+                            <input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                         <div>
+                            <label for="grade-level" class="block text-sm font-medium text-gray-700">שכבת גיל</label>
+                            <input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label for="domain-input" class="block text-sm font-medium text-gray-700">תחום</label>
+                            <input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label for="sub-domain-input" class="block text-sm font-medium text-gray-700">תת-תחום</label>
+                            <input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                         <div>
+                            <label for="pedagogy" class="block text-sm font-medium text-gray-700">הסבר פדגוגי</label>
+                            <textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea>
+                        </div>
+                        <button id="publish-btn" class="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-rocket ltr:mr-2 rtl:ml-2"></i>
+                            <span>פרסם לגלריה</span>
+                        </button>
                     </div>
-                     <button id="publish-btn" class="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center">
-                        <i class="fas fa-rocket ltr:mr-2 rtl:ml-2"></i>
-                        <span data-lang="publish_btn">פרסם לגלריה</span>
-                    </button>
-                </div>
-                 <div id="loading-spinner" class="hidden text-center p-8">
-                    <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
-                    <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
                 </div>
             </div>
         </main>
-        
-        <!-- Gallery and Modals remain the same -->
     </div>
     
-    <!-- Firebase SDKs -->
+    <div id="results-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                    <i class="fas fa-check h-6 w-6 text-green-600"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">האפליקציה פורסמה בהצלחה!</h3>
+                <div class="mt-4 px-7 py-3 space-y-4">
+                    <p class="text-sm text-gray-500">הקישור המקוצר מוכן לשיתוף:</p>
+                    <input id="result-short-url" type="text" readonly class="w-full bg-gray-100 p-2 rounded border text-center">
+                    <p class="text-sm text-gray-500">קוד QR לסריקה מהירה:</p>
+                    <img id="result-qr-code" src="" alt="QR Code" class="mx-auto border p-1">
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="close-results-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600">
+                        סגור
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <!-- App Logic -->
     <script src="js/firebase-config.js"></script>
     <script type="module" src="js/studio.js"></script>
 </body>
 </html>
-
 
 
 ========================================================================================================================
@@ -292,18 +304,18 @@ const firebaseConfig = {
 ========================================================================================================================
 FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\js\studio.js
 TYPE: .js
-SIZE: 10827 characters
+SIZE: 13336 characters
 FOLDER: public
 ========================================================================================================================
 
 // --- Initialize Firebase ---
-// Assumes firebase-config.js is loaded in HTML
+// Assumes firebase-config.js is loaded in the HTML
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const functions = firebase.functions();
 const firestore = firebase.firestore();
 
-// --- I18N Translations ---
+// --- I18N Translations (translations object here) ---
 const translations = {
     en: {
         login_title: "Vibe Studio",
@@ -312,22 +324,8 @@ const translations = {
         studio_title: "Vibe Studio",
         gallery_btn: "Gallery",
         logout_btn: "Logout",
-        app_details_title: "1. App Details",
-        app_name_label: "App Name",
-        grade_level_label: "Grade Level",
-        domain_label: "Domain",
-        sub_domain_label: "Sub-domain",
-        pedagogy_label: "Pedagogical Explanation",
-        ai_prompt_title: "2. Describe Your Applet",
-        ai_prompt_placeholder: "e.g., Create a game for 3rd grade to practice addition and subtraction up to 100...",
         generate_btn: "Generate with AI",
-        preview_title: "3. Live Preview",
-        preview_placeholder: "The preview of your applet will appear here...",
-        generated_code_title: "Generated HTML Code:",
-        publish_btn: "Publish to Gallery",
         loading_ai: "Generating... Please wait...",
-        publish_success_title: "App Published Successfully!",
-        gallery_title: "Community App Gallery",
     },
     he: {
         login_title: "Vibe Studio",
@@ -336,27 +334,18 @@ const translations = {
         studio_title: "Vibe Studio",
         gallery_btn: "גלריה",
         logout_btn: "התנתק",
-        app_details_title: "1. פרטי האפליקציה",
-        app_name_label: "שם האפליקציה",
-        grade_level_label: "שכבת גיל",
-        domain_label: "תחום",
-        sub_domain_label: "תת-תחום",
-        pedagogy_label: "הסבר פדגוגי",
-        ai_prompt_title: "2. תאר את היישומון הרצוי",
-        ai_prompt_placeholder: "לדוגמה: צור משחקון לכיתה ג' לתרגול חיבור וחיסור עד 100...",
         generate_btn: "צור עם AI",
-        preview_title: "3. תצוגה מקדימה",
-        preview_placeholder: "התצוגה המקדימה של היישומון תופיע כאן...",
-        generated_code_title: "קוד HTML שנוצר:",
-        publish_btn: "פרסם לגלריה",
         loading_ai: "יוצר... אנא המתן...",
-        publish_success_title: "האפליקציה פורסמה בהצלחה!",
-        gallery_title: "גלריית אפליקציות קהילתית",
     }
 };
 
+// --- Global State ---
 let currentLanguage = 'he';
-let generatedHtmlContent = ''; // Store generated HTML for publishing
+let generatedHtmlContent = ''; 
+let personasData = [];
+let promptsData = [];
+let selectedPersonaId = null;
+let selectedPromptId = null;
 
 // --- DOM Element References ---
 const loginContainer = document.getElementById('login-container');
@@ -366,147 +355,217 @@ const emailInput = document.getElementById('email-input');
 const sendLinkBtn = document.getElementById('send-link-btn');
 const feedbackMessage = document.getElementById('feedback-message');
 const logoutBtn = document.getElementById('logout-btn');
-const galleryViewBtn = document.getElementById('gallery-view-btn');
 const langEnBtn = document.getElementById('lang-en-btn');
 const langHeBtn = document.getElementById('lang-he-btn');
-
-// Creator & Gallery Views
-const creatorView = document.getElementById('creator-view');
-const galleryView = document.getElementById('gallery-view');
+const galleryViewBtn = document.getElementById('gallery-view-btn');
+const tabs = { creator: document.getElementById('tab-creator'), preview: document.getElementById('tab-preview'), publish: document.getElementById('tab-publish') };
+const contents = { creator: document.getElementById('content-creator'), preview: document.getElementById('content-preview'), publish: document.getElementById('content-publish') };
+const personaLibrary = document.getElementById('persona-library');
+const promptLibrary = document.getElementById('prompt-library');
 const aiPromptInput = document.getElementById('ai-prompt-input');
 const generateAiBtn = document.getElementById('generate-ai-btn');
 const loadingSpinner = document.getElementById('loading-spinner');
-const generationResultArea = document.getElementById('generation-result-area');
 const previewIframe = document.getElementById('preview-iframe');
-const previewPlaceholder = document.querySelector('.preview-placeholder');
-const htmlCodeOutput = document.getElementById('html-code-output');
 const publishBtn = document.getElementById('publish-btn');
 const resultsModal = document.getElementById('results-modal');
 const closeResultsModalBtn = document.getElementById('close-results-modal');
+const resultShortUrl = document.getElementById('result-short-url');
+const resultQrCode = document.getElementById('result-qr-code');
 
-// --- Language & View Management ---
+
+// =================================================================
+// START: COMPLETE AND CORRECT LOGIN LOGIC (Mirrors FireClass)
+// =================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Authentication State Listener (Checks if user is already logged in)
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            loginContainer.classList.add('hidden');
+            studioContainer.classList.remove('hidden');
+            initializeStudio();
+        } else {
+            loginContainer.classList.remove('hidden');
+            studioContainer.classList.add('hidden');
+        }
+    });
+
+    // 2. Login Form Submission Listener (Sends the magic link)
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalBtnText = sendLinkBtn.textContent;
+            sendLinkBtn.disabled = true;
+            sendLinkBtn.textContent = '...';
+            
+            try {
+                const actionCodeSettings = {
+                    url: window.location.origin + '/index.html',
+                    handleCodeInApp: true,
+                };
+                await auth.sendSignInLinkToEmail(emailInput.value, actionCodeSettings);
+                window.localStorage.setItem('emailForSignIn', emailInput.value);
+                feedbackMessage.textContent = 'קישור נשלח! בדוק את המייל.';
+                feedbackMessage.className = 'mt-4 text-center text-green-600';
+            } catch (error) {
+                console.error("Error sending login link:", error);
+                feedbackMessage.textContent = `שגיאה בשליחת הקישור: ${error.message}`;
+                feedbackMessage.className = 'mt-4 text-center text-red-600';
+            } finally {
+                sendLinkBtn.disabled = false;
+                sendLinkBtn.textContent = originalBtnText;
+            }
+        });
+    }
+
+    // 3. Handle Return from Email Link (Completes the login)
+    if (auth.isSignInWithEmailLink(window.location.href)) {
+        let email = window.localStorage.getItem('emailForSignIn');
+        if (!email) {
+            email = window.prompt('אנא הזן את המייל לאימות');
+        }
+        if (email) {
+            auth.signInWithEmailLink(email, window.location.href)
+                .then(() => {
+                    window.localStorage.removeItem('emailForSignIn');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch(error => {
+                    console.error("Error signing in with email link:", error);
+                    feedbackMessage.textContent = `Failed to sign in: ${error.message}`;
+                });
+        }
+    }
+});
+// =================================================================
+// END: COMPLETE AND CORRECT LOGIN LOGIC
+// =================================================================
+
+
+function initializeStudio() {
+    setLanguage('he');
+    loadDynamicContent();
+    setupEventListeners();
+}
+
+function setupEventListeners() {
+    logoutBtn.addEventListener('click', () => auth.signOut());
+    langEnBtn.addEventListener('click', () => setLanguage('en'));
+    langHeBtn.addEventListener('click', () => setLanguage('he'));
+    galleryViewBtn.addEventListener('click', () => {
+        alert('תצוגת הגלריה תהיה זמינה בקרוב! (Gallery view coming soon!)');
+    });
+    Object.keys(tabs).forEach(tabName => {
+        tabs[tabName].addEventListener('click', () => showTab(tabName));
+    });
+    generateAiBtn.addEventListener('click', generateAiApp);
+    publishBtn.addEventListener('click', publishApp);
+    closeResultsModalBtn.addEventListener('click', () => {
+        resultsModal.classList.add('hidden');
+    });
+}
+
+function showTab(tabName) {
+    Object.values(contents).forEach(content => content.classList.add('hidden'));
+    Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+    contents[tabName].classList.remove('hidden');
+    tabs[tabName].classList.add('active');
+}
+
 function setLanguage(lang) {
     currentLanguage = lang;
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
-
     document.querySelectorAll('[data-lang]').forEach(element => {
         const key = element.getAttribute('data-lang');
-        if (translations[lang][key]) {
+        if (translations[lang] && translations[lang][key]) {
             element.textContent = translations[lang][key];
         }
     });
-
-    document.querySelectorAll('[data-lang-placeholder]').forEach(element => {
-        const key = element.getAttribute('data-lang-placeholder');
-        if (translations[lang][key]) {
-            element.placeholder = translations[lang][key];
-        }
-    });
-
+    renderCards();
     langEnBtn.classList.toggle('bg-blue-100', lang === 'en');
     langEnBtn.classList.toggle('text-blue-700', lang === 'en');
     langHeBtn.classList.toggle('bg-blue-100', lang === 'he');
     langHeBtn.classList.toggle('text-blue-700', lang === 'he');
 }
 
-langEnBtn.addEventListener('click', () => setLanguage('en'));
-langHeBtn.addEventListener('click', () => setLanguage('he'));
-
-galleryViewBtn.addEventListener('click', () => {
-    creatorView.classList.add('hidden');
-    galleryView.classList.remove('hidden');
-    // We would load the gallery here. For now, it's a placeholder.
-});
-
-
-// --- Authentication Logic ---
-auth.onAuthStateChanged(user => {
-    if (user) {
-        loginContainer.classList.add('hidden');
-        studioContainer.classList.remove('hidden');
-    } else {
-        loginContainer.classList.remove('hidden');
-        studioContainer.classList.add('hidden');
-    }
-});
-
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const originalBtnText = sendLinkBtn.textContent;
-    sendLinkBtn.disabled = true;
-    sendLinkBtn.textContent = '...';
-    
+async function loadDynamicContent() {
     try {
-        await auth.sendSignInLinkToEmail(emailInput.value, {
-            url: window.location.href,
-            handleCodeInApp: true,
-        });
-        window.localStorage.setItem('emailForSignIn', emailInput.value);
-        feedbackMessage.textContent = 'קישור נשלח! בדוק את המייל.';
-        feedbackMessage.className = 'text-green-600';
+        const [personasRes, promptsRes] = await Promise.all([
+            fetch('./data/personas.json'),
+            fetch('./data/prompts.json')
+        ]);
+        personasData = (await personasRes.json()).personas;
+        promptsData = (await promptsRes.json()).prompts;
+        renderCards();
     } catch (error) {
-        console.error(error);
-        feedbackMessage.textContent = 'שגיאה בשליחת הקישור.';
-        feedbackMessage.className = 'text-red-600';
-    } finally {
-        sendLinkBtn.disabled = false;
-        sendLinkBtn.textContent = originalBtnText;
-    }
-});
-
-if (auth.isSignInWithEmailLink(window.location.href)) {
-    let email = window.localStorage.getItem('emailForSignIn');
-    if (!email) {
-        email = window.prompt('אנא הזן את המייל לאימות');
-    }
-    if (email) {
-        auth.signInWithEmailLink(email, window.location.href)
-            .then(() => window.localStorage.removeItem('emailForSignIn'))
-            .catch(error => console.error(error));
+        console.error("Failed to load dynamic content:", error);
     }
 }
 
-logoutBtn.addEventListener('click', () => auth.signOut());
+function renderCards() {
+    personaLibrary.innerHTML = personasData.map(p => `
+        <div class="card-base p-4 bg-white rounded-lg shadow-md text-center cursor-pointer ${selectedPersonaId === p.id ? 'selected' : ''}" data-id="${p.id}">
+            <i class="${p.icon} fa-2x text-blue-500 mb-2"></i>
+            <h3 class="font-bold">${p.title[currentLanguage]}</h3>
+            <p class="text-sm text-gray-600">${p.description[currentLanguage]}</p>
+        </div>
+    `).join('');
+    promptLibrary.innerHTML = promptsData.map(p => `
+        <div class="card-base p-4 bg-white rounded-lg shadow-md text-center cursor-pointer ${selectedPromptId === p.id ? 'selected' : ''}" data-id="${p.id}">
+            <i class="${p.icon} fa-2x text-green-500 mb-2"></i>
+            <h3 class="font-bold">${p.title[currentLanguage]}</h3>
+            <p class="text-sm text-gray-600">${p.description[currentLanguage]}</p>
+        </div>
+    `).join('');
+    addCardEventListeners();
+}
 
+function addCardEventListeners() {
+    personaLibrary.querySelectorAll('.card-base').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('#persona-library .card-base').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPersonaId = card.dataset.id;
+        });
+    });
+    promptLibrary.querySelectorAll('.card-base').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('#prompt-library .card-base').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPromptId = card.dataset.id;
+            const selectedPrompt = promptsData.find(p => p.id === selectedPromptId);
+            if (selectedPrompt) {
+                aiPromptInput.value = selectedPrompt.base_prompt[currentLanguage];
+            }
+        });
+    });
+}
 
-// --- AI Generation Logic ---
-generateAiBtn.addEventListener('click', async () => {
-    const prompt = aiPromptInput.value.trim();
-    if (!prompt) {
-        alert('Please enter a description for the applet.');
+async function generateAiApp() {
+    if (!selectedPersonaId || !selectedPromptId || !aiPromptInput.value.trim()) {
+        alert("אנא בחר סגנון AI, סוג פעילות, ומלא את תיאור היישומון.");
         return;
     }
-
+    const persona = personasData.find(p => p.id === selectedPersonaId);
+    const finalPrompt = `${persona.system_prompt[currentLanguage]}\n\nTeacher's Request:\n${aiPromptInput.value.trim()}`;
     loadingSpinner.classList.remove('hidden');
-    generationResultArea.classList.add('hidden');
     generateAiBtn.disabled = true;
-
     try {
         const askVibeAI = functions.httpsCallable('askVibeAI');
-        const result = await askVibeAI({ prompt: prompt, language: currentLanguage });
-        
+        const result = await askVibeAI({ prompt: finalPrompt, language: currentLanguage });
         if (!result.data || !result.data.htmlCode || !result.data.metadata) {
              throw new Error("Invalid response structure from AI function.");
         }
         const { htmlCode, metadata } = result.data;
-        
-        // Populate form and preview
         document.getElementById('app-name').value = metadata.appName || '';
         document.getElementById('grade-level').value = metadata.gradeLevel || '';
         document.getElementById('domain-input').value = metadata.domain || '';
         document.getElementById('sub-domain-input').value = metadata.subDomain || '';
         document.getElementById('pedagogy').value = metadata.pedagogicalExplanation || '';
-        
-        htmlCodeOutput.value = htmlCode || '';
-        generatedHtmlContent = htmlCode || ''; // Store for publishing
-
+        generatedHtmlContent = htmlCode || ''; 
         previewIframe.srcdoc = generatedHtmlContent; 
-        previewPlaceholder.classList.add('hidden');
-        previewIframe.classList.remove('hidden');
-        
-        generationResultArea.classList.remove('hidden');
-
+        showTab('preview');
     } catch (error) {
         console.error("Error calling askVibeAI function:", error);
         alert(`Error generating app: ${error.message}`);
@@ -514,64 +573,44 @@ generateAiBtn.addEventListener('click', async () => {
         loadingSpinner.classList.add('hidden');
         generateAiBtn.disabled = false;
     }
-});
+}
 
-
-// --- Publishing Logic ---
-publishBtn.addEventListener('click', async () => {
+async function publishApp() {
     const appData = {
         appName: document.getElementById('app-name').value.trim(),
         gradeLevel: document.getElementById('grade-level').value.trim(),
         domain: document.getElementById('domain-input').value.trim(),
         subDomain: document.getElementById('sub-domain-input').value.trim(),
         pedagogy: document.getElementById('pedagogy').value.trim(),
-        htmlContent: generatedHtmlContent,
-        // Add other fields if necessary, e.g., school code, instructions
-        schoolCode: "00000", // Default or from a form field
-        instructions: "" // Default or from a form field
+        htmlContent: generatedHtmlContent
     };
-
     if (!appData.appName || !generatedHtmlContent) {
         alert('App Name and generated content are required.');
         return;
     }
-    const originalBtnText = publishBtn.querySelector('span').textContent;
+    const originalBtnSpan = publishBtn.querySelector('span');
+    const originalBtnText = originalBtnSpan ? originalBtnSpan.textContent : 'פרסם לגלריה';
     publishBtn.disabled = true;
-    publishBtn.querySelector('span').textContent = '...';
-
+    if (originalBtnSpan) originalBtnSpan.textContent = '...';
     try {
-        // Reusing the existing publishHtml cloud function
         const publishHtml = functions.httpsCallable('publishHtml');
         const result = await publishHtml(appData);
-
         if (result.data.success) {
-            document.getElementById('result-long-url').href = result.data.longUrl;
-            document.getElementById('result-long-url').textContent = result.data.longUrl;
+            resultShortUrl.value = result.data.shortUrl;
+            resultQrCode.src = result.data.qrCodeDataUrl || '';
+            resultQrCode.classList.toggle('hidden', !result.data.qrCodeDataUrl);
             resultsModal.classList.remove('hidden');
-            resultsModal.classList.add('flex');
         } else {
             throw new Error(result.data.error || 'Unknown publishing error.');
         }
-
     } catch (error) {
         console.error("Error publishing:", error);
         alert(`Failed to publish: ${error.message}`);
     } finally {
         publishBtn.disabled = false;
-        publishBtn.querySelector('span').textContent = originalBtnText;
+        if (originalBtnSpan) originalBtnSpan.textContent = originalBtnText;
     }
-});
-
-closeResultsModalBtn.addEventListener('click', () => {
-    resultsModal.classList.add('hidden');
-    resultsModal.classList.remove('flex');
-});
-
-
-// --- Initial Setup ---
-setLanguage('he'); // Set default language to Hebrew
-
-
+}
 
 
 ========================================================================================================================
@@ -651,6 +690,83 @@ FOLDER: public
 }
 
 
+
+
+========================================================================================================================
+FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\data\prompts.json
+TYPE: .json
+SIZE: 2747 characters
+FOLDER: public
+========================================================================================================================
+
+{
+  "prompts": [
+    {
+      "id": "quiz",
+      "icon": "fas fa-question-circle",
+      "title": {
+        "en": "Quiz / Test",
+        "he": "חידון / מבחן"
+      },
+      "description": {
+        "en": "A series of questions with multiple-choice or text answers.",
+        "he": "סדרה של שאלות עם תשובות רב-ברירתיות או טקסט פתוח."
+      },
+      "base_prompt": {
+        "en": "Create a quiz for [GRADE LEVEL] about [SUBJECT]. The quiz should have [NUMBER] multiple-choice questions. The topic is [TOPIC].",
+        "he": "צור חידון עבור [שכבת גיל] בנושא [מקצוע]. החידון צריך לכלול [מספר] שאלות רב-ברירתיות. הנושא הוא [נושא]."
+      }
+    },
+    {
+      "id": "drag-and-drop",
+      "icon": "fas fa-hand-paper",
+      "title": {
+        "en": "Drag & Drop Game",
+        "he": "משחק גרירה והתאמה"
+      },
+      "description": {
+        "en": "A matching game where users drag items to their correct targets.",
+        "he": "משחק התאמה בו גוררים פריטים למטרות הנכונות שלהם."
+      },
+      "base_prompt": {
+        "en": "Create a drag and drop matching game. The items to drag are [ITEM 1, ITEM 2, ITEM 3] and the targets are [TARGET 1, TARGET 2, TARGET 3]. The theme is [THEME].",
+        "he": "צור משחק התאמה של גרירה ושחרור. הפריטים לגרירה הם [פריט 1, פריט 2, פריט 3] והמטרות הן [מטרה 1, מטרה 2, מטרה 3]. הנושא הוא [נושא]."
+      }
+    },
+    {
+      "id": "story",
+      "icon": "fas fa-book-open",
+      "title": {
+        "en": "Interactive Story",
+        "he": "סיפור אינטראקטיבי"
+      },
+      "description": {
+        "en": "A story where the user makes choices that change the outcome.",
+        "he": "סיפור בו המשתמש מבצע בחירות שמשפיעות על התוצאה."
+      },
+      "base_prompt": {
+        "en": "Create a short interactive story for [AGE GROUP] about [STORY SUBJECT]. The story should have at least two decision points for the reader.",
+        "he": "צור סיפור אינטראקטיבי קצר עבור [קבוצת גיל] על [נושא הסיפור]. הסיפור צריך להכיל לפחות שתי נקודות החלטה עבור הקורא."
+      }
+    },
+    {
+      "id": "simulation",
+      "icon": "fas fa-flask",
+      "title": {
+        "en": "Simple Simulation",
+        "he": "סימולציה פשוטה"
+      },
+      "description": {
+        "en": "A basic simulation of a process with interactive controls.",
+        "he": "הדמיה בסיסית של תהליך עם בקרים אינטראקטיביים."
+      },
+      "base_prompt": {
+        "en": "Create a simple simulation of [PROCESS, e.g., plant growth]. The user should be able to control [CONTROL 1, e.g., amount of water] and [CONTROL 2, e.g., amount of sunlight] and see the result.",
+        "he": "צור סימולציה פשוטה של [תהליך, למשל: צמיחת צמח]. המשתמש צריך להיות מסוגל לשלוט ב[בקר 1, למשל: כמות המים] וב[בקר 2, למשל: כמות אור השמש] ולראות את התוצאה."
+      }
+    }
+  ]
+}
 
 
 ========================================================================================================================
@@ -1409,6 +1525,6 @@ Teachers may update app details (only owner can edit).
 
 
 ================================================================================
-SUMMARY: 23 files added
+SUMMARY: 24 files added
 Folders searched: public, docs
 ================================================================================

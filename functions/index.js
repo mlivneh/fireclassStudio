@@ -1,48 +1,163 @@
+
+
 /**
- * @file Cloud Functions for Vibe Studio project.
- * @description Handles AI-powered app generation, publishing, and management.
+ * @file Cloud Functions for Vibe Studio.
+ * @description Handles AI app generation by directly accessing the FireClass DB for verification.
  */
 
-// V2 Imports
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
+const {defineSecret} = require("firebase-functions/params");
 
-// Node.js and Third-party Imports
 const admin = require("firebase-admin");
-const https = require("https");
-const { GoogleGenerativeAI } = require("@google/generative-ai"); // Gemini SDK
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { BitlyClient } = require('bitly');
+const qrcode = require('qrcode');
 
-// Initialize Firebase
+// Define secrets
+const geminiApiKey = defineSecret("GEMINI_API_KEY");
+const bitlyAccessToken = defineSecret("BITLY_ACCESS_TOKEN");
+const fireclassServiceAccount = defineSecret("FIRECLASS_SERVICE_ACCOUNT");
+
+// --- Initialize Primary App (fireStudio) ---
 admin.initializeApp();
 const firestore = admin.firestore();
 
-// --- Main New Function for Gemini Integration ---
+// --- Lazily Initialize Secondary App (fireClass) ---
+let fireClassAdminApp = null;
+function getFireClassDb() {
+    if (!fireClassAdminApp) {
+        try {
+            const serviceAccount = JSON.parse(fireclassServiceAccount.value());
+            fireClassAdminApp = admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount)
+            }, 'fireClassApp');
+        } catch (e) {
+            console.error("CRITICAL: Failed to parse FIRECLASS_SERVICE_ACCOUNT secret.", e);
+            return null;
+        }
+    }
+    return fireClassAdminApp.firestore();
+}
 
 /**
- * Generates an HTML applet and its metadata using the Gemini API with structured output.
+ * Verifies teacher registration by directly querying the FireClass Firestore database.
  */
-exports.askVibeAI = onCall({ secrets: ["GEMINI_API_KEY"] }, async (request) => {
+async function verifyTeacherRegistration(email) {
+    const fireClassDb = getFireClassDb();
+    if (!fireClassDb) return false;
+    try {
+        const teachersRef = fireClassDb.collection("teachers");
+        const snapshot = await teachersRef.where("profile.email", "==", email.toLowerCase()).limit(1).get();
+        return !snapshot.empty;
+    } catch (error) {
+        console.error("Error querying FireClass database:", error);
+        return false;
+    }
+}
+
+/**
+ * Gets teacher details (like schoolCode) from the FireClass database.
+ */
+async function getTeacherDetails(email) {
+    const fireClassDb = getFireClassDb();
+    if (!fireClassDb) return null;
+    try {
+        const snapshot = await fireClassDb.collection("teachers").where("profile.email", "==", email.toLowerCase()).limit(1).get();
+        if (!snapshot.empty) {
+            return snapshot.docs[0].data().profile;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting teacher details:", error);
+        return null;
+    }
+}
+
+/**
+ * Saves app metadata to Firestore.
+ */
+async function saveMetadata(appData, urls, authContext, teacherDetails) {
+    const docData = {
+        appName: appData.appName,
+        gradeLevel: appData.gradeLevel,
+        domain: appData.domain,
+        subDomain: appData.subDomain,
+        pedagogicalExplanation: appData.pedagogy,
+        app_url: urls.longUrl,
+        teacher_uid: authContext.uid,
+        teacher_name: authContext.token.name || authContext.token.email,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        schoolCode: teacherDetails ? teacherDetails.schoolCode || '000000000' : '000000000'
+    };
+    const docRef = await firestore.collection("community_apps").add(docData);
+    return docRef;
+}
+
+exports.publishHtml = onCall({ 
+    secrets: [bitlyAccessToken, fireclassServiceAccount]
+}, async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Auth required.");
+    
+    const email = request.auth.token.email;
+    if (!email) throw new HttpsError("invalid-argument", "User email is not available.");
+
+    const [isTeacher, teacherDetails] = await Promise.all([
+        verifyTeacherRegistration(email),
+        getTeacherDetails(email)
+    ]);
+
+    if (!isTeacher) {
+        throw new HttpsError("permission-denied", "This action is restricted to registered teachers only.");
+    }
+
+    const {htmlContent, ...appData} = request.data;
+    if (!htmlContent) throw new HttpsError("invalid-argument", "HTML content is missing.");
+
+    const bucket = admin.storage().bucket();
+    const filePath = `apps/${request.auth.uid}/${Date.now()}/index.html`;
+    const file = bucket.file(filePath);
+    const downloadToken = require('crypto').randomUUID();
+
+    // FIX: Ensure UTF-8 encoding for Hebrew characters
+    await file.save(htmlContent, { 
+        contentType: 'text/html; charset=utf-8', 
+        metadata: { firebaseStorageDownloadTokens: downloadToken } 
+    });
+
+    const encodedPath = encodeURIComponent(filePath);
+    const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
+    
+    const docRef = await saveMetadata(appData, { longUrl }, request.auth, teacherDetails);
+
+    try {
+        const bitly = new BitlyClient(bitlyAccessToken.value());
+        const shortUrl = (await bitly.shorten(longUrl)).link;
+        const qrCodeDataUrl = await qrcode.toDataURL(longUrl);
+
+        await docRef.update({ shortUrl: shortUrl, qrCodeDataUrl: qrCodeDataUrl });
+
+        return {success: true, longUrl, shortUrl, qrCodeDataUrl};
+    } catch (error) {
+        console.error("Error with Bit.ly or QR Code:", error);
+        return {success: true, longUrl, shortUrl: longUrl, qrCodeDataUrl: null};
+    }
+});
+
+exports.askVibeAI = onCall({ secrets: [geminiApiKey] }, async (request) => {
     if (!request.auth) {
         throw new HttpsError("unauthenticated", "Authentication is required.");
     }
-
     const userPrompt = request.data.prompt;
-    const language = request.data.language === 'en' ? 'English' : 'Hebrew'; // Sanitize language input
+    const language = request.data.language === 'en' ? 'English' : 'Hebrew';
 
     if (!userPrompt) {
         throw new HttpsError("invalid-argument", "The function must be called with a 'prompt' argument.");
     }
-
-    // Initialize the Gemini client with the API key from secrets
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    // Define the JSON schema for the model's response, based on the spec
+    const genAI = new GoogleGenerativeAI(geminiApiKey.value());
     const jsonSchema = {
         type: "OBJECT",
         properties: {
-            htmlCode: {
-                type: "STRING",
-                description: "The complete, single-file HTML code for the educational applet. It must include TailwindCSS from a CDN and all CSS and JavaScript must be inline within the HTML file."
-            },
+            htmlCode: { type: "STRING", description: "The complete, single-file HTML code for the educational applet. It must include TailwindCSS from a CDN and all CSS and JavaScript must be inline within the HTML file." },
             metadata: {
                 type: "OBJECT",
                 properties: {
@@ -52,153 +167,25 @@ exports.askVibeAI = onCall({ secrets: ["GEMINI_API_KEY"] }, async (request) => {
                     subDomain: { type: "STRING", description: `The specific topic within the domain in ${language}, e.g., 'שברים פשוטים' or 'Fractions'.` },
                     pedagogicalExplanation: { type: "STRING", description: `A brief explanation of the pedagogical goal of the applet in ${language}.` }
                 },
-                required: ["appName", "gradeLevel", "domain", "subDomain", "pedagogicalExplanation"]
             }
         },
-        required: ["htmlCode", "metadata"]
     };
-
     const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash", // Use a modern, capable model
+        model: "gemini-1.5-flash",
         generationConfig: {
             responseMimeType: "application/json",
             responseSchema: jsonSchema,
         },
     });
-
-    // Construct the detailed prompt with system instructions
-    const systemInstruction = `You are an expert developer specializing in creating interactive, single-file HTML educational applets for teachers.
-    Follow these rules strictly:
-    1. All code (HTML, CSS, JS) must be in a single HTML file.
-    2. Use Tailwind CSS for styling by including '<script src="https://cdn.tailwindcss.com"></script>'.
-    3. Ensure the applet is fully responsive and looks great on mobile devices.
-    4. The code must be clean, well-commented, and functional.
-    5. Your entire response must be a single JSON object matching the provided schema.
-    6. All text inside the metadata object must be in ${language}.`;
-
+    const systemInstruction = `You are an expert developer specializing in creating interactive, single-file HTML educational applets for teachers... Your entire response must be a single JSON object matching the provided schema. All text inside the metadata object must be in ${language}.`;
     const fullPrompt = `${systemInstruction}\n\nTeacher's Request: "${userPrompt}"`;
 
     try {
-        console.log("Sending prompt to Gemini API...");
         const result = await model.generateContent(fullPrompt);
         const responseText = result.response.text();
-        console.log("Received response from Gemini API.");
-        
-        // The API guarantees a JSON string, so we parse it.
-        const parsedJson = JSON.parse(responseText);
-        return parsedJson;
-
+        return JSON.parse(responseText);
     } catch (error) {
         console.error("Error calling Gemini API:", error);
-        throw new HttpsError("internal", "Failed to get a response from the AI model. The model may have been unable to generate content based on the prompt.");
+        throw new HttpsError("internal", "Failed to get a response from the AI model.");
     }
 });
-
-
-// --- Existing Functions (Updated to include new metadata fields) ---
-
-/**
- * Saves app metadata to the Firestore database.
- * This function is now updated to accept the new fields from Gemini.
- */
-async function saveMetadata(appData, publicUrl, authContext) {
-    const teacherUid = authContext.uid;
-    const teacherName = authContext.token.name || authContext.token.email;
-
-    const appDoc = {
-        appName: appData.appName,
-        gradeLevel: appData.gradeLevel,
-        domain: appData.domain, // New field
-        subDomain: appData.subDomain, // New field
-        schoolCode: appData.schoolCode || "00000",
-        pedagogicalExplanation: appData.pedagogy, // 'pedagogy' from client form
-        instructions: appData.instructions,
-        app_url: publicUrl,
-        teacher_uid: teacherUid,
-        teacher_name: teacherName,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-    await firestore.collection("community_apps").add(appDoc);
-}
-
-/**
- * Publishes an app from a single HTML string.
- */
-exports.publishHtml = onCall(async (request) => {
-    // This function remains largely the same but the data it receives is richer.
-    if (!request.auth) throw new HttpsError("unauthenticated", "Auth required.");
-    const {htmlContent, ...appData} = request.data;
-    if (!htmlContent) throw new HttpsError("invalid-argument", "HTML content is missing.");
-
-    const bucket = admin.storage().bucket();
-    const uniqueId = `${Date.now()}`;
-    const filePath = `apps/${request.auth.uid}/${uniqueId}/index.html`;
-    const file = bucket.file(filePath);
-    const downloadToken = require('crypto').randomUUID();
-    
-    await file.save(htmlContent, {
-        contentType: 'text/html',
-        metadata: { firebaseStorageDownloadTokens: downloadToken }
-    });
-
-    const encodedPath = encodeURIComponent(filePath);
-    const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
-    
-    await saveMetadata(appData, longUrl, request.auth);
-    const shortUrl = await getShortUrl(longUrl); // Assuming getShortUrl exists
-    
-    return {success: true, longUrl, shortUrl};
-});
-
-/**
- * Updates the details of an existing application.
- */
-exports.updateAppDetails = onCall(async (request) => {
-    if (!request.auth) {
-        throw new HttpsError("unauthenticated", "You must be logged in to edit an app.");
-    }
-
-    const { id, ...updatedData } = request.data;
-    if (!id) {
-        throw new HttpsError("invalid-argument", "The document ID is missing.");
-    }
-
-    const appRef = firestore.collection("community_apps").doc(id);
-    const appDoc = await appRef.get();
-
-    if (!appDoc.exists) {
-        throw new HttpsError("not-found", "The specified app does not exist.");
-    }
-
-    // Security check: Only the owner can edit the app.
-    if (appDoc.data().teacher_uid !== request.auth.uid) {
-        throw new HttpsError("permission-denied", "You do not have permission to edit this app.");
-    }
-
-    // Update the document with the new data from the form
-    await appRef.update({
-        ...updatedData, // Spreads all fields from updatedData
-        appName: updatedData.appName,
-        gradeLevel: updatedData.gradeLevel,
-        domain: updatedData.domain,
-        subDomain: updatedData.subDomain,
-        schoolCode: updatedData.schoolCode,
-        pedagogicalExplanation: updatedData.pedagogy,
-        instructions: updatedData.instructions,
-    });
-
-    return { success: true, message: "App updated successfully." };
-});
-
-
-// Helper function for URL shortening (assuming it's needed)
-async function getShortUrl(longUrl) {
-    return new Promise((resolve, reject) => {
-        https.get(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`, (res) => {
-            let body = "";
-            res.on("data", (chunk) => (body += chunk));
-            res.on("end", () => resolve(body));
-        }).on("error", reject);
-    });
-}
-
