@@ -109,14 +109,14 @@ def main():
         time.sleep(2)
         
         # Launch Claude Desktop
-#       if launch_claude():
-#           print("Completed successfully!")
-#            print("\nInstructions:")
-#            print("1. Claude Desktop should open now")
-#            print("2. If it didn't open, launch it manually")
-#            print("3. I now have access to all files in the selected folder")
-#       else:
-#            print("Configuration updated, but you'll need to launch Claude Desktop manually")
+        if launch_claude():
+            print("Completed successfully!")
+            print("\nInstructions:")
+            print("1. Claude Desktop should open now")
+            print("2. If it didn't open, launch it manually")
+            print("3. I now have access to all files in the selected folder")
+        else:
+            print("Configuration updated, but you'll need to launch Claude Desktop manually")
     
     input("\nPress Enter to exit...")
 

@@ -1,14 +1,14 @@
 ================================================================================
 COLLECTED FILES
-From directory: C:\Users\Meir Livneh\Documents\fireStudio
+From directory: C:\Users\Meir Livneh\Documents\fireclassStudio
 Target folders: public, function, docs
 ================================================================================
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\index.html
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\index.html
 TYPE: .html
-SIZE: 10361 characters
+SIZE: 13752 characters
 FOLDER: public
 ========================================================================================================================
 
@@ -37,7 +37,6 @@ FOLDER: public
             transform: translateY(-2px);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
-        /* Tab styling */
         .tab-button.active {
             border-color: #3b82f6;
             background-color: #eff6ff;
@@ -67,11 +66,11 @@ FOLDER: public
                     <button id="lang-en-btn" class="px-3 py-1 text-sm rounded-md">EN</button>
                     <button id="lang-he-btn" class="px-3 py-1 text-sm rounded-md bg-blue-100 text-blue-700">HE</button>
                 </div>
+                <button id="get-last-link-btn" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">שחזר קישור אחרון</button>
                 <button id="gallery-view-btn" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md" data-lang="gallery_btn">גלריה</button>
                 <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" data-lang="logout_btn">התנתק</button>
             </div>
         </header>
-
         <main class="p-4 md:p-8">
             <div class="mb-6 border-b border-gray-200">
                 <nav class="-mb-px flex space-x-4 rtl:space-x-reverse" aria-label="Tabs">
@@ -80,7 +79,6 @@ FOLDER: public
                     <button id="tab-publish" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">שלב 3: פרטים ופרסום</button>
                 </nav>
             </div>
-
             <div>
                 <div id="content-creator" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
@@ -94,48 +92,37 @@ FOLDER: public
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h2 class="text-lg font-bold mb-2">שלב 3: הוסף את הפרטים שלך</h2>
+                        <h2 class="text-lg font-bold mb-2">שלב 3: תאר את היישומון הרצוי</h2>
                         <textarea id="ai-prompt-input" rows="10" class="w-full border-gray-300 rounded-md shadow-sm p-3" placeholder="...מלא את הפרטים מהתבנית והוסף כל בקשה נוספת, למשל: 'שיהיה משחק מצחיק עם דמויות של חיות'"></textarea>
                         <button id="generate-ai-btn" class="mt-4 w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
                             <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
                             <span data-lang="generate_btn">צור עם AI</span>
                         </button>
+                        
+                        <button id="paste-external-code-btn" class="mt-2 w-full bg-gray-600 text-white p-3 rounded-md font-semibold hover:bg-gray-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-paste ltr:mr-2 rtl:ml-2"></i>
+                            <span data-lang="paste_external_code">הדבק קוד חיצוני</span>
+                        </button>
+                        
                          <div id="loading-spinner" class="hidden text-center p-8">
                             <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
                             <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
                         </div>
                     </div>
                 </div>
-
                 <div id="content-preview" class="hidden">
                      <div id="preview-container" class="w-full h-[70vh] border rounded-md shadow-inner overflow-hidden bg-white">
                        <iframe id="preview-iframe" class="w-full h-full"></iframe>
                     </div>
                 </div>
-
                 <div id="content-publish" class="hidden bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
                     <h2 class="text-lg font-bold mb-4 border-b pb-2">פרטי האפליקציה</h2>
                      <div class="space-y-4">
-                        <div>
-                            <label for="app-name" class="block text-sm font-medium text-gray-700">שם האפליקציה</label>
-                            <input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                        </div>
-                         <div>
-                            <label for="grade-level" class="block text-sm font-medium text-gray-700">שכבת גיל</label>
-                            <input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                        </div>
-                        <div>
-                            <label for="domain-input" class="block text-sm font-medium text-gray-700">תחום</label>
-                            <input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                        </div>
-                        <div>
-                            <label for="sub-domain-input" class="block text-sm font-medium text-gray-700">תת-תחום</label>
-                            <input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
-                        </div>
-                         <div>
-                            <label for="pedagogy" class="block text-sm font-medium text-gray-700">הסבר פדגוגי</label>
-                            <textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea>
-                        </div>
+                        <div><label for="app-name" class="block text-sm font-medium text-gray-700">שם האפליקציה</label><input type="text" id="app-name" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                        <div><label for="grade-level" class="block text-sm font-bold mb-4">שכבת גיל</label><input type="text" id="grade-level" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                        <div><label for="domain-input" class="block text-sm font-medium text-gray-700">תחום</label><input type="text" id="domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                        <div><label for="sub-domain-input" class="block text-sm font-medium text-gray-700">תת-תחום</label><input type="text" id="sub-domain-input" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+                        <div><label for="pedagogy" class="block text-sm font-medium text-gray-700">הסבר פדגוגי</label><textarea id="pedagogy" rows="4" class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2"></textarea></div>
                         <button id="publish-btn" class="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center">
                             <i class="fas fa-rocket ltr:mr-2 rtl:ml-2"></i>
                             <span>פרסם לגלריה</span>
@@ -146,12 +133,43 @@ FOLDER: public
         </main>
     </div>
     
+    <div id="gallery-container" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600">גלריית היישומונים</h1>
+            <button id="back-to-studio-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">חזור לסטודיו</button>
+        </header>
+        <main class="p-4 md:p-8">
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table id="gallery-table" class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">שם היישומון</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">יוצר</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">מוסד</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">הסבר פדגוגי</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gallery-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="text-viewer-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="relative mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <h3 id="text-viewer-title" class="text-lg font-medium text-gray-900 mb-4"></h3>
+            <div id="text-viewer-content" class="text-gray-600 max-h-96 overflow-y-auto whitespace-pre-wrap"></div>
+            <div class="mt-6 text-right">
+                <button id="close-text-viewer-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600">סגור</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="results-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
         <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                    <i class="fas fa-check h-6 w-6 text-green-600"></i>
-                </div>
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"><i class="fas fa-check h-6 w-6 text-green-600"></i></div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">האפליקציה פורסמה בהצלחה!</h3>
                 <div class="mt-4 px-7 py-3 space-y-4">
                     <p class="text-sm text-gray-500">הקישור המקוצר מוכן לשיתוף:</p>
@@ -160,27 +178,36 @@ FOLDER: public
                     <img id="result-qr-code" src="" alt="QR Code" class="mx-auto border p-1">
                 </div>
                 <div class="items-center px-4 py-3">
-                    <button id="close-results-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600">
-                        סגור
-                    </button>
+                    <button id="close-results-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600">סגור</button>
                 </div>
             </div>
         </div>
     </div>
     
+    <div id="paste-code-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="relative mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4" data-lang="paste_external_code_title">הדבקת קוד חיצוני</h3>
+            <p class="text-sm text-gray-600 mb-4" data-lang="paste_external_code_desc">הדבק כאן קוד HTML מלא (כולל תגיות html, head, body) שנוצר ממקור חיצוני (כמו Claude או ChatGPT).</p>
+            <textarea id="external-code-textarea" class="w-full h-80 p-2 border border-gray-300 rounded-md font-mono text-sm" placeholder="<html>...</html>"></textarea>
+            <div class="mt-4 flex justify-end space-x-2 rtl:space-x-reverse">
+                <button id="cancel-paste-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600" data-lang="cancel">בטל</button>
+                <button id="load-pasted-code-btn" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700" data-lang="load_pasted_code">טען לתצוגה מקדימה</button>
+            </div>
+        </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    
     <script src="js/firebase-config.js"></script>
     <script type="module" src="js/studio.js"></script>
 </body>
 </html>
 
 
+
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\test_login.html
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\test_login.html
 TYPE: .html
 SIZE: 3657 characters
 FOLDER: public
@@ -283,60 +310,22 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\js\firebase-config.js
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\js\_studio.js
 TYPE: .js
-SIZE: 408 characters
-FOLDER: public
-========================================================================================================================
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyByKMGr2knkWL8Ps_4DoA9KOJ8Ta0IjN-I",
-  authDomain: "fireclassstudio.firebaseapp.com",
-  projectId: "fireclassstudio",
-  storageBucket: "fireclassstudio.firebasestorage.app",
-  messagingSenderId: "900608873995",
-  appId: "1:900608873995:web:130533a437b1f168f7190e",
-  measurementId: "G-RN24RDVPJ4"
-};
-
-
-========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\js\studio.js
-TYPE: .js
-SIZE: 13336 characters
+SIZE: 16671 characters
 FOLDER: public
 ========================================================================================================================
 
 // --- Initialize Firebase ---
-// Assumes firebase-config.js is loaded in the HTML
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const functions = firebase.functions();
 const firestore = firebase.firestore();
 
-// --- I18N Translations (translations object here) ---
+// --- I18N Translations ---
 const translations = {
-    en: {
-        login_title: "Vibe Studio",
-        login_prompt: "Enter your email to get a secure sign-in link.",
-        send_link_btn: "Send Link",
-        studio_title: "Vibe Studio",
-        gallery_btn: "Gallery",
-        logout_btn: "Logout",
-        generate_btn: "Generate with AI",
-        loading_ai: "Generating... Please wait...",
-    },
-    he: {
-        login_title: "Vibe Studio",
-        login_prompt: "הכנס את המייל לקבלת קישור כניסה מאובטח.",
-        send_link_btn: "שלח קישור",
-        studio_title: "Vibe Studio",
-        gallery_btn: "גלריה",
-        logout_btn: "התנתק",
-        generate_btn: "צור עם AI",
-        loading_ai: "יוצר... אנא המתן...",
-    }
+    en: { login_title: "Vibe Studio", login_prompt: "Enter your email to get a secure sign-in link.", send_link_btn: "Send Link", studio_title: "Vibe Studio", gallery_btn: "Gallery", logout_btn: "Logout", generate_btn: "Generate with AI", loading_ai: "Generating... Please wait...", },
+    he: { login_title: "Vibe Studio", login_prompt: "הכנס את המייל לקבלת קישור כניסה מאובטח.", send_link_btn: "שלח קישור", studio_title: "Vibe Studio", gallery_btn: "גלריה", logout_btn: "התנתק", generate_btn: "צור עם AI", loading_ai: "יוצר... אנא המתן...", }
 };
 
 // --- Global State ---
@@ -350,6 +339,7 @@ let selectedPromptId = null;
 // --- DOM Element References ---
 const loginContainer = document.getElementById('login-container');
 const studioContainer = document.getElementById('studio-container');
+const galleryContainer = document.getElementById('gallery-container');
 const loginForm = document.getElementById('login-form');
 const emailInput = document.getElementById('email-input');
 const sendLinkBtn = document.getElementById('send-link-btn');
@@ -357,7 +347,9 @@ const feedbackMessage = document.getElementById('feedback-message');
 const logoutBtn = document.getElementById('logout-btn');
 const langEnBtn = document.getElementById('lang-en-btn');
 const langHeBtn = document.getElementById('lang-he-btn');
+const getLastLinkBtn = document.getElementById('get-last-link-btn');
 const galleryViewBtn = document.getElementById('gallery-view-btn');
+const backToStudioBtn = document.getElementById('back-to-studio-btn');
 const tabs = { creator: document.getElementById('tab-creator'), preview: document.getElementById('tab-preview'), publish: document.getElementById('tab-publish') };
 const contents = { creator: document.getElementById('content-creator'), preview: document.getElementById('content-preview'), publish: document.getElementById('content-publish') };
 const personaLibrary = document.getElementById('persona-library');
@@ -372,38 +364,32 @@ const closeResultsModalBtn = document.getElementById('close-results-modal');
 const resultShortUrl = document.getElementById('result-short-url');
 const resultQrCode = document.getElementById('result-qr-code');
 
-
 // =================================================================
-// START: COMPLETE AND CORRECT LOGIN LOGIC (Mirrors FireClass)
+// START: LOGIN & APP INITIALIZATION
 // =================================================================
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. Authentication State Listener (Checks if user is already logged in)
     auth.onAuthStateChanged(user => {
         if (user) {
             loginContainer.classList.add('hidden');
             studioContainer.classList.remove('hidden');
+            galleryContainer.classList.add('hidden');
             initializeStudio();
         } else {
             loginContainer.classList.remove('hidden');
             studioContainer.classList.add('hidden');
+            galleryContainer.classList.add('hidden');
         }
     });
 
-    // 2. Login Form Submission Listener (Sends the magic link)
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const originalBtnText = sendLinkBtn.textContent;
             sendLinkBtn.disabled = true;
             sendLinkBtn.textContent = '...';
-            
             try {
-                const actionCodeSettings = {
-                    url: window.location.origin + '/index.html',
-                    handleCodeInApp: true,
-                };
-                await auth.sendSignInLinkToEmail(emailInput.value, actionCodeSettings);
+                await auth.sendSignInLinkToEmail(emailInput.value, { url: window.location.href, handleCodeInApp: true });
                 window.localStorage.setItem('emailForSignIn', emailInput.value);
                 feedbackMessage.textContent = 'קישור נשלח! בדוק את המייל.';
                 feedbackMessage.className = 'mt-4 text-center text-green-600';
@@ -418,29 +404,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Handle Return from Email Link (Completes the login)
     if (auth.isSignInWithEmailLink(window.location.href)) {
         let email = window.localStorage.getItem('emailForSignIn');
-        if (!email) {
-            email = window.prompt('אנא הזן את המייל לאימות');
-        }
+        if (!email) { email = window.prompt('אנא הזן את המייל לאימות'); }
         if (email) {
             auth.signInWithEmailLink(email, window.location.href)
                 .then(() => {
                     window.localStorage.removeItem('emailForSignIn');
                     window.history.replaceState({}, document.title, window.location.pathname);
                 })
-                .catch(error => {
-                    console.error("Error signing in with email link:", error);
-                    feedbackMessage.textContent = `Failed to sign in: ${error.message}`;
-                });
+                .catch(error => { console.error("Error signing in:", error); });
         }
     }
 });
-// =================================================================
-// END: COMPLETE AND CORRECT LOGIN LOGIC
-// =================================================================
-
 
 function initializeStudio() {
     setLanguage('he');
@@ -452,8 +428,15 @@ function setupEventListeners() {
     logoutBtn.addEventListener('click', () => auth.signOut());
     langEnBtn.addEventListener('click', () => setLanguage('en'));
     langHeBtn.addEventListener('click', () => setLanguage('he'));
+    getLastLinkBtn.addEventListener('click', getMyLastAppLink);
     galleryViewBtn.addEventListener('click', () => {
-        alert('תצוגת הגלריה תהיה זמינה בקרוב! (Gallery view coming soon!)');
+        studioContainer.classList.add('hidden');
+        galleryContainer.classList.remove('hidden');
+        loadGallery();
+    });
+    backToStudioBtn.addEventListener('click', () => {
+        galleryContainer.classList.add('hidden');
+        studioContainer.classList.remove('hidden');
     });
     Object.keys(tabs).forEach(tabName => {
         tabs[tabName].addEventListener('click', () => showTab(tabName));
@@ -464,6 +447,9 @@ function setupEventListeners() {
         resultsModal.classList.add('hidden');
     });
 }
+// =================================================================
+// END: LOGIN & APP INITIALIZATION
+// =================================================================
 
 function showTab(tabName) {
     Object.values(contents).forEach(content => content.classList.add('hidden'));
@@ -484,9 +470,7 @@ function setLanguage(lang) {
     });
     renderCards();
     langEnBtn.classList.toggle('bg-blue-100', lang === 'en');
-    langEnBtn.classList.toggle('text-blue-700', lang === 'en');
     langHeBtn.classList.toggle('bg-blue-100', lang === 'he');
-    langHeBtn.classList.toggle('text-blue-700', lang === 'he');
 }
 
 async function loadDynamicContent() {
@@ -498,9 +482,7 @@ async function loadDynamicContent() {
         personasData = (await personasRes.json()).personas;
         promptsData = (await promptsRes.json()).prompts;
         renderCards();
-    } catch (error) {
-        console.error("Failed to load dynamic content:", error);
-    }
+    } catch (error) { console.error("Failed to load dynamic content:", error); }
 }
 
 function renderCards() {
@@ -523,21 +505,19 @@ function renderCards() {
 
 function addCardEventListeners() {
     personaLibrary.querySelectorAll('.card-base').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
             document.querySelectorAll('#persona-library .card-base').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selectedPersonaId = card.dataset.id;
+            e.currentTarget.classList.add('selected');
+            selectedPersonaId = e.currentTarget.dataset.id;
         });
     });
     promptLibrary.querySelectorAll('.card-base').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
             document.querySelectorAll('#prompt-library .card-base').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selectedPromptId = card.dataset.id;
+            e.currentTarget.classList.add('selected');
+            selectedPromptId = e.currentTarget.dataset.id;
             const selectedPrompt = promptsData.find(p => p.id === selectedPromptId);
-            if (selectedPrompt) {
-                aiPromptInput.value = selectedPrompt.base_prompt[currentLanguage];
-            }
+            if (selectedPrompt) { aiPromptInput.value = selectedPrompt.base_prompt[currentLanguage]; }
         });
     });
 }
@@ -567,7 +547,7 @@ async function generateAiApp() {
         previewIframe.srcdoc = generatedHtmlContent; 
         showTab('preview');
     } catch (error) {
-        console.error("Error calling askVibeAI function:", error);
+        console.error("Error calling AI function:", error);
         alert(`Error generating app: ${error.message}`);
     } finally {
         loadingSpinner.classList.add('hidden');
@@ -612,9 +592,901 @@ async function publishApp() {
     }
 }
 
+async function getMyLastAppLink() {
+    if (!auth.currentUser) { alert("You must be logged in."); return; }
+    try {
+        const querySnapshot = await firestore.collection("community_apps")
+            .where("teacher_uid", "==", auth.currentUser.uid)
+            .orderBy("createdAt", "desc").limit(1).get();
+        if (querySnapshot.empty) { alert("לא נמצאו יישומונים שפרסמת."); return; }
+        const lastApp = querySnapshot.docs[0].data();
+        resultShortUrl.value = lastApp.shortUrl || lastApp.app_url;
+        if (lastApp.qrCodeDataUrl) {
+            resultQrCode.src = lastApp.qrCodeDataUrl;
+            resultQrCode.classList.remove('hidden');
+        } else {
+             resultQrCode.classList.add('hidden');
+        }
+        resultsModal.classList.remove('hidden');
+    } catch (error) {
+        console.error("Error getting last link:", error);
+        alert("שגיאה בשליפת הקישור האחרון.");
+    }
+}
+
+async function loadGallery() {
+    const galleryGrid = document.getElementById('gallery-grid');
+    galleryGrid.innerHTML = `<div class="text-center p-8 col-span-full"><i class="fas fa-spinner fa-spin fa-2x text-gray-500"></i><p class="mt-2 text-gray-600">טוען יישומונים...</p></div>`;
+    try {
+        const querySnapshot = await firestore.collection("community_apps").orderBy("createdAt", "desc").get();
+        if (querySnapshot.empty) {
+            galleryGrid.innerHTML = `<p class="text-center p-8 text-gray-700 col-span-full">הגלריה ריקה. צור ופרסם את היישומון הראשון שלך!</p>`;
+            return;
+        }
+        galleryGrid.innerHTML = querySnapshot.docs.map(doc => {
+            const app = doc.data();
+            const appName = app.appName || 'ללא שם';
+            const teacherName = app.teacher_name || 'לא ידוע';
+            const schoolCode = app.schoolCode || '000000000';
+            const shortUrl = app.shortUrl || app.app_url;
+            const qrCodeUrl = app.qrCodeDataUrl || '';
+            return `
+                <div class="bg-white p-6 rounded-lg shadow-lg space-y-4 flex flex-col">
+                    <div>
+                        <h3 class="font-bold text-lg text-blue-700">${appName}</h3>
+                        <p class="text-sm text-gray-500">נוצר על ידי: ${teacherName} | מוסד: ${schoolCode}</p>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-gray-600"><strong>תחום:</strong> ${app.domain || ''}</p>
+                        <p class="text-gray-600"><strong>שכבת גיל:</strong> ${app.gradeLevel || ''}</p>
+                    </div>
+                    <div class="mt-4 border-t pt-4">
+                        <label class="block text-sm font-medium text-gray-700">קישור מקוצר (Bit.ly)</label>
+                        <div class="flex">
+                            <input type="text" readonly value="${shortUrl}" class="mt-1 block w-full border-gray-300 rounded-l-md shadow-sm p-2 bg-gray-100">
+                            <button onclick="navigator.clipboard.writeText('${shortUrl}')" class="bg-gray-200 hover:bg-gray-300 px-3 rounded-r-md">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    ${qrCodeUrl ? `<div class="text-center"><img src="${qrCodeUrl}" alt="QR Code" class="mx-auto border p-1 w-32 h-32"></div>` : ''}
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error("Error loading gallery:", error);
+        galleryGrid.innerHTML = `<p class="text-center p-8 text-red-500 col-span-full">שגיאה בטעינת הגלריה.</p>`;
+    }
+}
+
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\data\personas.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\js\firebase-config.js
+TYPE: .js
+SIZE: 408 characters
+FOLDER: public
+========================================================================================================================
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyByKMGr2knkWL8Ps_4DoA9KOJ8Ta0IjN-I",
+  authDomain: "fireclassstudio.firebaseapp.com",
+  projectId: "fireclassstudio",
+  storageBucket: "fireclassstudio.firebasestorage.app",
+  messagingSenderId: "900608873995",
+  appId: "1:900608873995:web:130533a437b1f168f7190e",
+  measurementId: "G-RN24RDVPJ4"
+};
+
+
+========================================================================================================================
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\js\studio.js
+TYPE: .js
+SIZE: 34441 characters
+FOLDER: public
+========================================================================================================================
+
+// --- Initialize Firebase and DOM elements ---
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const functions = firebase.functions();
+const firestore = firebase.firestore();
+
+// --- I18N Translations ---
+const translations = {
+    en: { 
+        login_title: "Vibe Studio", 
+        login_prompt: "Enter your email to get a secure sign-in link.", 
+        send_link_btn: "Send Link", 
+        studio_title: "Vibe Studio", 
+        gallery_btn: "Gallery", 
+        logout_btn: "Logout", 
+        generate_btn: "Generate with AI", 
+        refine_btn: "Refine App",
+        loading_ai: "Generating... Please wait...", 
+        loading_refine: "Refining... Please wait...",
+        paste_external_code: "Paste External Code",
+        paste_external_code_title: "Paste External Code",
+        paste_external_code_desc: "Paste here complete HTML code (including html, head, body tags) generated from external sources (like Claude or ChatGPT).",
+        cancel: "Cancel",
+        load_pasted_code: "Load to Preview"
+    },
+    he: { 
+        login_title: "Vibe Studio", 
+        login_prompt: "הכנס את המייל לקבלת קישור כניסה מאובטח.", 
+        send_link_btn: "שלח קישור", 
+        studio_title: "Vibe Studio", 
+        gallery_btn: "גלריה", 
+        logout_btn: "התנתק", 
+        generate_btn: "צור עם AI", 
+        refine_btn: "שפר יישומון",
+        loading_ai: "יוצר... אנא המתן...", 
+        loading_refine: "משפר... אנא המתן...",
+        paste_external_code: "הדבק קוד חיצוני",
+        paste_external_code_title: "הדבקת קוד חיצוני",
+        paste_external_code_desc: "הדבק כאן קוד HTML מלא (כולל תגיות html, head, body) שנוצר ממקור חיצוני (כמו Claude או ChatGPT).",
+        cancel: "בטל",
+        load_pasted_code: "טען לתצוגה מקדימה"
+    }
+};
+
+// --- Global State ---
+let currentLanguage = 'he';
+let generatedHtmlContent = ''; 
+let personasData = [];
+let promptsData = [];
+let selectedPersonaId = null;
+let selectedPromptId = null;
+let conversationHistory = [];
+let generationCount = 0;
+let currentSessionId = null;
+let originalPromptData = null;
+
+// --- DOM Element References ---
+const loginContainer = document.getElementById('login-container');
+const studioContainer = document.getElementById('studio-container');
+const galleryContainer = document.getElementById('gallery-container');
+const loginForm = document.getElementById('login-form');
+const emailInput = document.getElementById('email-input');
+const sendLinkBtn = document.getElementById('send-link-btn');
+const feedbackMessage = document.getElementById('feedback-message');
+const logoutBtn = document.getElementById('logout-btn');
+const langEnBtn = document.getElementById('lang-en-btn');
+const langHeBtn = document.getElementById('lang-he-btn');
+const getLastLinkBtn = document.getElementById('get-last-link-btn');
+const galleryViewBtn = document.getElementById('gallery-view-btn');
+const backToStudioBtn = document.getElementById('back-to-studio-btn');
+const tabs = { creator: document.getElementById('tab-creator'), preview: document.getElementById('tab-preview'), publish: document.getElementById('tab-publish') };
+const contents = { creator: document.getElementById('content-creator'), preview: document.getElementById('content-preview'), publish: document.getElementById('content-publish') };
+const personaLibrary = document.getElementById('persona-library');
+const promptLibrary = document.getElementById('prompt-library');
+const aiPromptInput = document.getElementById('ai-prompt-input');
+const generateAiBtn = document.getElementById('generate-ai-btn');
+const loadingSpinner = document.getElementById('loading-spinner');
+const previewIframe = document.getElementById('preview-iframe');
+const publishBtn = document.getElementById('publish-btn');
+const resultsModal = document.getElementById('results-modal');
+const closeResultsModalBtn = document.getElementById('close-results-modal');
+const resultShortUrl = document.getElementById('result-short-url');
+const resultQrCode = document.getElementById('result-qr-code');
+
+// --- NEW: Refinement UI Elements ---
+const refinementContainer = document.createElement('div');
+const refinementInput = document.createElement('textarea');
+const refineBtn = document.createElement('button');
+const conversationLog = document.createElement('div');
+
+// --- Text Viewer Modal Elements ---
+const textViewerModal = document.getElementById('text-viewer-modal');
+const textViewerTitle = document.getElementById('text-viewer-title');
+const textViewerContent = document.getElementById('text-viewer-content');
+const closeTextViewerModalBtn = document.getElementById('close-text-viewer-modal');
+
+// --- NEW: External Code Paste Modal Elements ---
+const pasteCodeModal = document.getElementById('paste-code-modal');
+const pasteExternalCodeBtn = document.getElementById('paste-external-code-btn');
+const cancelPasteModalBtn = document.getElementById('cancel-paste-modal');
+const loadPastedCodeBtn = document.getElementById('load-pasted-code-btn');
+const externalCodeTextarea = document.getElementById('external-code-textarea');
+
+// =================================================================
+// START: LOGIN & APP INITIALIZATION
+// =================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            loginContainer.classList.add('hidden');
+            studioContainer.classList.remove('hidden');
+            galleryContainer.classList.add('hidden');
+            initializeStudio();
+        } else {
+            loginContainer.classList.remove('hidden');
+            studioContainer.classList.add('hidden');
+            galleryContainer.classList.add('hidden');
+        }
+    });
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalBtnText = sendLinkBtn.textContent;
+            sendLinkBtn.disabled = true;
+            sendLinkBtn.textContent = '...';
+            try {
+                await auth.sendSignInLinkToEmail(emailInput.value, { url: window.location.href, handleCodeInApp: true });
+                window.localStorage.setItem('emailForSignIn', emailInput.value);
+                feedbackMessage.textContent = 'קישור נשלח! בדוק את המייל.';
+                feedbackMessage.className = 'mt-4 text-center text-green-600';
+            } catch (error) {
+                console.error("Error sending login link:", error);
+                feedbackMessage.textContent = `שגיאה בשליחת הקישור: ${error.message}`;
+                feedbackMessage.className = 'mt-4 text-center text-red-600';
+            } finally {
+                sendLinkBtn.disabled = false;
+                sendLinkBtn.textContent = originalBtnText;
+            }
+        });
+    }
+
+    if (auth.isSignInWithEmailLink(window.location.href)) {
+        let email = window.localStorage.getItem('emailForSignIn');
+        if (!email) { email = window.prompt('אנא הזן את המייל לאימות'); }
+        if (email) {
+            auth.signInWithEmailLink(email, window.location.href)
+                .then(() => {
+                    window.localStorage.removeItem('emailForSignIn');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch(error => { console.error("Error signing in:", error); });
+        }
+    }
+});
+
+function initializeStudio() {
+    setLanguage('he');
+    loadDynamicContent();
+    setupEventListeners();
+    setupRefinementUI();
+}
+
+// --- Setup Refinement UI (NEW v2.1) ---
+function setupRefinementUI() {
+    // Create refinement container
+    refinementContainer.className = 'mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden';
+    refinementContainer.id = 'refinement-container';
+    
+    // Title
+    const refinementTitle = document.createElement('h3');
+    refinementTitle.className = 'text-lg font-bold mb-3 text-blue-800';
+    refinementTitle.textContent = currentLanguage === 'he' ? 'שיח רציף עם AI' : 'Continuous AI Dialogue';
+    
+    // Input field
+    refinementInput.className = 'w-full border-gray-300 rounded-md shadow-sm p-3 mb-3';
+    refinementInput.rows = 3;
+    refinementInput.placeholder = currentLanguage === 'he' 
+        ? 'הקלד בקשת שיפור, למשל: "הוסף טיימר של 30 שניות" או "שנה את הצבע לכחול"'
+        : 'Type refinement request, e.g.: "Add a 30-second timer" or "Change color to blue"';
+    
+    // Refine button
+    refineBtn.className = 'w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center mb-3';
+    refineBtn.innerHTML = `<i class="fas fa-magic mr-2"></i><span data-lang="refine_btn">${translations[currentLanguage].refine_btn}</span>`;
+    refineBtn.addEventListener('click', refineApp);
+    
+    // Save/Load buttons container
+    const sessionButtonsContainer = document.createElement('div');
+    sessionButtonsContainer.className = 'flex gap-2 mb-3';
+    
+    // Save session button
+    const saveSessionBtn = document.createElement('button');
+    saveSessionBtn.className = 'flex-1 bg-green-600 text-white p-2 rounded-md font-semibold hover:bg-green-700 transition-colors flex items-center justify-center';
+    saveSessionBtn.innerHTML = `<i class="fas fa-save mr-1"></i><span>שמור</span>`;
+    saveSessionBtn.addEventListener('click', saveCurrentSession);
+    
+    // Load session button
+    const loadSessionBtn = document.createElement('button');
+    loadSessionBtn.className = 'flex-1 bg-purple-600 text-white p-2 rounded-md font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center';
+    loadSessionBtn.innerHTML = `<i class="fas fa-folder-open mr-1"></i><span>טען</span>`;
+    loadSessionBtn.addEventListener('click', showLoadSessionModal);
+    
+    sessionButtonsContainer.appendChild(saveSessionBtn);
+    sessionButtonsContainer.appendChild(loadSessionBtn);
+    
+    // Conversation log
+    conversationLog.className = 'mt-4 max-h-40 overflow-y-auto bg-white p-3 rounded border';
+    conversationLog.innerHTML = '<p class="text-gray-500 text-sm">היסטוריית השיח תוצג כאן</p>';
+    
+    // Assemble refinement UI
+    refinementContainer.appendChild(refinementTitle);
+    refinementContainer.appendChild(refinementInput);
+    refinementContainer.appendChild(refineBtn);
+    refinementContainer.appendChild(sessionButtonsContainer);
+    refinementContainer.appendChild(conversationLog);
+    
+    // Insert after the preview iframe
+    const previewContainer = document.getElementById('content-preview');
+    previewContainer.appendChild(refinementContainer);
+}
+
+// --- Event Listeners Setup ---
+function setupEventListeners() {
+    logoutBtn.addEventListener('click', () => auth.signOut());
+    langEnBtn.addEventListener('click', () => setLanguage('en'));
+    langHeBtn.addEventListener('click', () => setLanguage('he'));
+    getLastLinkBtn.addEventListener('click', getMyLastAppLink);
+    galleryViewBtn.addEventListener('click', () => {
+        studioContainer.classList.add('hidden');
+        galleryContainer.classList.remove('hidden');
+        loadGallery();
+    });
+    backToStudioBtn.addEventListener('click', () => {
+        galleryContainer.classList.add('hidden');
+        studioContainer.classList.remove('hidden');
+    });
+    Object.keys(tabs).forEach(tabName => {
+        tabs[tabName].addEventListener('click', () => showTab(tabName));
+    });
+    generateAiBtn.addEventListener('click', generateAiApp);
+    publishBtn.addEventListener('click', publishApp);
+    
+    closeResultsModalBtn.addEventListener('click', () => {
+        resultsModal.classList.add('hidden');
+        showTab('creator');
+        loadGallery();
+    });
+
+    closeTextViewerModalBtn.addEventListener('click', () => {
+        textViewerModal.classList.add('hidden');
+    });
+    
+    // --- NEW: External Code Paste Modal Event Listeners ---
+    pasteExternalCodeBtn.addEventListener('click', () => {
+        pasteCodeModal.classList.remove('hidden');
+    });
+
+    cancelPasteModalBtn.addEventListener('click', () => {
+        pasteCodeModal.classList.add('hidden');
+    });
+
+    loadPastedCodeBtn.addEventListener('click', loadPastedCode);
+}
+
+function showTab(tabName) {
+    Object.values(contents).forEach(content => content.classList.add('hidden'));
+    Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+    contents[tabName].classList.remove('hidden');
+    tabs[tabName].classList.add('active');
+    
+    // Show/hide refinement UI based on tab
+    if (tabName === 'preview' && generatedHtmlContent) {
+        refinementContainer.classList.remove('hidden');
+    } else {
+        refinementContainer.classList.add('hidden');
+    }
+}
+
+function setLanguage(lang) {
+    currentLanguage = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-lang]').forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+    
+    // Update refinement UI language
+    if (refinementInput) {
+        refinementInput.placeholder = lang === 'he' 
+            ? 'הקלד בקשת שיפור, למשל: "הוסף טיימר של 30 שניות" או "שנה את הצבע לכחול"'
+            : 'Type refinement request, e.g.: "Add a 30-second timer" or "Change color to blue"';
+    }
+    
+    renderCards();
+    langEnBtn.classList.toggle('bg-blue-100', lang === 'en');
+    langHeBtn.classList.toggle('bg-blue-100', lang === 'he');
+}
+
+async function loadDynamicContent() {
+    try {
+        const [personasRes, promptsRes] = await Promise.all([
+            fetch('./data/personas.json'),
+            fetch('./data/prompts.json')
+        ]);
+        personasData = (await personasRes.json()).personas;
+        promptsData = (await promptsRes.json()).prompts;
+        renderCards();
+    } catch (error) { console.error("Failed to load dynamic content:", error); }
+}
+
+function renderCards() {
+    personaLibrary.innerHTML = personasData.map(p => `
+        <div class="card-base p-4 bg-white rounded-lg shadow-md text-center cursor-pointer ${selectedPersonaId === p.id ? 'selected' : ''}" data-id="${p.id}">
+            <i class="${p.icon} fa-2x text-blue-500 mb-2"></i>
+            <h3 class="font-bold">${p.title[currentLanguage]}</h3>
+            <p class="text-sm text-gray-600">${p.description[currentLanguage]}</p>
+        </div>
+    `).join('');
+    promptLibrary.innerHTML = promptsData.map(p => `
+        <div class="card-base p-4 bg-white rounded-lg shadow-md text-center cursor-pointer ${selectedPromptId === p.id ? 'selected' : ''}" data-id="${p.id}">
+            <i class="${p.icon} fa-2x text-green-500 mb-2"></i>
+            <h3 class="font-bold">${p.title[currentLanguage]}</h3>
+            <p class="text-sm text-gray-600">${p.description[currentLanguage]}</p>
+        </div>
+    `).join('');
+    addCardEventListeners();
+}
+
+function addCardEventListeners() {
+    personaLibrary.querySelectorAll('.card-base').forEach(card => {
+        card.addEventListener('click', (e) => {
+            document.querySelectorAll('#persona-library .card-base').forEach(c => c.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+            selectedPersonaId = e.currentTarget.dataset.id;
+        });
+    });
+    promptLibrary.querySelectorAll('.card-base').forEach(card => {
+        card.addEventListener('click', (e) => {
+            document.querySelectorAll('#prompt-library .card-base').forEach(c => c.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+            selectedPromptId = e.currentTarget.dataset.id;
+            const selectedPrompt = promptsData.find(p => p.id === selectedPromptId);
+            if (selectedPrompt) { aiPromptInput.value = selectedPrompt.base_prompt[currentLanguage]; }
+        });
+    });
+}
+
+// --- NEW: Conversation Management Functions ---
+function addToConversationLog(type, message, timestamp = Date.now()) {
+    conversationHistory.push({ type, message, timestamp });
+    updateConversationDisplay();
+}
+
+function updateConversationDisplay() {
+    if (conversationHistory.length === 0) {
+        conversationLog.innerHTML = '<p class="text-gray-500 text-sm">היסטוריית השיח תוצג כאן</p>';
+        return;
+    }
+    
+    conversationLog.innerHTML = conversationHistory.map((entry, index) => `
+        <div class="mb-2 pb-2 ${index < conversationHistory.length - 1 ? 'border-b border-gray-100' : ''}">
+            <div class="flex items-center gap-2 mb-1">
+                <i class="fas ${entry.type === 'user' ? 'fa-user text-blue-600' : 'fa-robot text-green-600'} text-sm"></i>
+                <span class="text-xs text-gray-500">${new Date(entry.timestamp).toLocaleTimeString()}</span>
+            </div>
+            <p class="text-sm ${entry.type === 'user' ? 'text-blue-800' : 'text-green-800'}">${entry.message}</p>
+        </div>
+    `).join('');
+    
+    // Scroll to bottom
+    conversationLog.scrollTop = conversationLog.scrollHeight;
+}
+
+async function generateAiApp() {
+    if (!selectedPersonaId || !selectedPromptId || !aiPromptInput.value.trim()) {
+        alert("אנא בחר סגנון AI, סוג פעילות, ומלא את תיאור היישומון.");
+        return;
+    }
+    
+    const persona = personasData.find(p => p.id === selectedPersonaId);
+    const promptTemplate = promptsData.find(p => p.id === selectedPromptId);
+    
+    const promptData = {
+        persona: persona.system_prompt[currentLanguage],
+        template: promptTemplate.base_prompt[currentLanguage], 
+        content: aiPromptInput.value.trim()
+    };
+    
+    // --- שינוי מתחיל כאן ---
+    const loadingMessage = document.querySelector('#loading-spinner p');
+    loadingSpinner.classList.remove('hidden');
+    generateAiBtn.disabled = true;
+
+    try {
+        loadingMessage.textContent = 'יוצר קשר עם ה-AI...';
+        const askVibeAI = functions.httpsCallable('askVibeAI');
+
+        loadingMessage.textContent = 'ה-AI בונה את היישומון שלך (זה לוקח מספר שניות)...';
+        const result = await askVibeAI({ 
+            prompt: promptData, 
+            language: currentLanguage === 'he' ? 'he' : 'en'
+        });
+
+        loadingMessage.textContent = 'מקבל את הנתונים ומסיים את ההכנות...';
+        // --- סוף השינוי ---
+        
+        if (!result.data.success || !result.data.content) {
+             throw new Error("Invalid response structure from AI function.");
+        }
+        
+        const { htmlCode, metadata } = result.data.content;
+        document.getElementById('app-name').value = metadata.appName || '';
+        document.getElementById('grade-level').value = metadata.gradeLevel || '';
+        document.getElementById('domain-input').value = metadata.domain || '';
+        document.getElementById('sub-domain-input').value = metadata.subDomain || '';
+        document.getElementById('pedagogy').value = metadata.pedagogicalExplanation || '';
+        generatedHtmlContent = htmlCode || ''; 
+        previewIframe.srcdoc = generatedHtmlContent;
+        
+        // Reset conversation for new generation
+        conversationHistory = [];
+        generationCount = 1;
+        currentSessionId = null; // New session
+        originalPromptData = promptData; // Store original prompt for saving
+        addToConversationLog('user', aiPromptInput.value.trim());
+        addToConversationLog('ai', `יצרתי ${metadata.appName || 'יישומון חדש'} בהצלחה!`);
+        
+        showTab('preview');
+    } catch (error) {
+        console.error("Error calling AI function:", error);
+        alert(`Error generating app: ${error.message}`);
+    } finally {
+        loadingSpinner.classList.add('hidden');
+        generateAiBtn.disabled = false;
+        // שחזור ההודעה המקורית לפעם הבאה
+        loadingMessage.textContent = translations[currentLanguage].loading_ai;
+    }
+}
+
+// --- NEW: App Refinement Function ---
+async function refineApp() {
+    const refinementRequest = refinementInput.value.trim();
+    if (!refinementRequest || !generatedHtmlContent) {
+        alert("אנא הכנס בקשת שיפור ווודא שיש יישומון קיים לשיפור.");
+        return;
+    }
+    
+    // Update UI state
+    refineBtn.disabled = true;
+    const originalBtnText = refineBtn.querySelector('span').textContent;
+    refineBtn.querySelector('span').textContent = translations[currentLanguage].loading_refine;
+    
+    // Add user message to conversation
+    addToConversationLog('user', refinementRequest);
+    
+    try {
+        // Use the simplified askVibeAI with currentApp parameter
+        const askVibeAI = functions.httpsCallable('askVibeAI');
+        
+        const currentAppData = {
+            htmlCode: generatedHtmlContent,
+            metadata: {
+                appName: document.getElementById('app-name').value,
+                gradeLevel: document.getElementById('grade-level').value,
+                domain: document.getElementById('domain-input').value,
+                subDomain: document.getElementById('sub-domain-input').value,
+                pedagogicalExplanation: document.getElementById('pedagogy').value
+            }
+        };
+        
+        const result = await askVibeAI({
+            prompt: { content: refinementRequest },
+            currentApp: currentAppData,
+            language: currentLanguage === 'he' ? 'he' : 'en'
+        });
+        
+        if (!result.data.success || !result.data.content) {
+            throw new Error("Invalid refinement response from AI function.");
+        }
+        
+        const { htmlCode, metadata } = result.data.content;
+        
+        // Update the app
+        generatedHtmlContent = htmlCode;
+        previewIframe.srcdoc = generatedHtmlContent;
+        
+        // Update metadata if provided
+        if (metadata) {
+            if (metadata.appName) document.getElementById('app-name').value = metadata.appName;
+            if (metadata.gradeLevel) document.getElementById('grade-level').value = metadata.gradeLevel;
+            if (metadata.domain) document.getElementById('domain-input').value = metadata.domain;
+            if (metadata.subDomain) document.getElementById('sub-domain-input').value = metadata.subDomain;
+            if (metadata.pedagogicalExplanation) document.getElementById('pedagogy').value = metadata.pedagogicalExplanation;
+        }
+        
+        // Add AI response to conversation
+        const aiMessage = 'השיפור בוצע בהצלחה!';
+        addToConversationLog('ai', aiMessage);
+        
+        // Clear refinement input
+        refinementInput.value = '';
+        generationCount++;
+        
+        console.log(`✅ App refined successfully (generation ${generationCount})`);
+        
+    } catch (error) {
+        console.error("Error refining app:", error);
+        alert(`שגיאה בשיפור היישומון: ${error.message}`);
+        addToConversationLog('ai', `שגיאה: ${error.message}`);
+    } finally {
+        refineBtn.disabled = false;
+        refineBtn.querySelector('span').textContent = originalBtnText;
+    }
+}
+
+async function publishApp() {
+    const appData = {
+        appName: document.getElementById('app-name').value.trim(),
+        gradeLevel: document.getElementById('grade-level').value.trim(),
+        domain: document.getElementById('domain-input').value.trim(),
+        subDomain: document.getElementById('sub-domain-input').value.trim(),
+        pedagogy: document.getElementById('pedagogy').value.trim(),
+        htmlContent: generatedHtmlContent,
+        conversationLog: conversationHistory, // NEW: Include conversation history
+        generationCount: generationCount // NEW: Include generation count
+    };
+    if (!appData.appName || !generatedHtmlContent) {
+        alert('App Name and generated content are required.');
+        return;
+    }
+    const originalBtnSpan = publishBtn.querySelector('span');
+    const originalBtnText = originalBtnSpan ? originalBtnSpan.textContent : 'פרסם לגלריה';
+    publishBtn.disabled = true;
+    if (originalBtnSpan) originalBtnSpan.textContent = '...';
+    try {
+        const publishHtml = functions.httpsCallable('publishHtml');
+        const result = await publishHtml(appData);
+        if (result.data.success) {
+            resultShortUrl.value = result.data.shortUrl;
+            resultQrCode.src = result.data.qrCodeDataUrl || '';
+            resultQrCode.classList.toggle('hidden', !result.data.qrCodeDataUrl);
+            resultsModal.classList.remove('hidden');
+        } else {
+            throw new Error(result.data.error || 'Unknown publishing error.');
+        }
+    } catch (error) {
+        console.error("Error publishing:", error);
+        alert(`Failed to publish: ${error.message}`);
+    } finally {
+        publishBtn.disabled = false;
+        if (originalBtnSpan) originalBtnSpan.textContent = originalBtnText;
+    }
+}
+
+async function getMyLastAppLink() {
+    if (!auth.currentUser) { alert("You must be logged in."); return; }
+    try {
+        const querySnapshot = await firestore.collection("community_apps")
+            .where("teacher_uid", "==", auth.currentUser.uid)
+            .orderBy("createdAt", "desc").limit(1).get();
+        if (querySnapshot.empty) { alert("לא נמצאו יישומונים שפרסמת."); return; }
+        const lastApp = querySnapshot.docs[0].data();
+        resultShortUrl.value = lastApp.shortUrl || lastApp.app_url;
+        if (lastApp.qrCodeDataUrl) {
+            resultQrCode.src = lastApp.qrCodeDataUrl;
+            resultQrCode.classList.remove('hidden');
+        } else {
+             resultQrCode.classList.add('hidden');
+        }
+        resultsModal.classList.remove('hidden');
+    } catch (error) {
+        console.error("Error getting last link:", error);
+        alert("שגיאה בשליפת הקישור האחרון.");
+    }
+}
+
+// --- Helper functions for the gallery ---
+function truncateText(text = '', maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substr(0, maxLength - 3) + '...';
+}
+
+function showFullText(title, content) {
+    textViewerTitle.textContent = title;
+    textViewerContent.textContent = content;
+    textViewerModal.classList.remove('hidden');
+}
+
+// --- Gallery Logic ---
+async function loadGallery() {
+    const galleryTableBody = document.getElementById('gallery-table-body');
+    galleryTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8">טוען...</td></tr>`;
+
+    try {
+        const querySnapshot = await firestore.collection("community_apps").orderBy("createdAt", "desc").get();
+        if (querySnapshot.empty) {
+            galleryTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8">הגלריה ריקה.</td></tr>`;
+            return;
+        }
+
+        galleryTableBody.innerHTML = querySnapshot.docs.map(doc => {
+            const app = doc.data();
+            const pedagogy = app.pedagogicalExplanation || '';
+            const truncatedPedagogy = truncateText(pedagogy, 30);
+            const generationInfo = app.generationCount ? ` (${app.generationCount} גרסאות)` : '';
+
+            return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${app.appName || ''}${generationInfo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${app.teacher_name || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">${app.schoolCode || ''}</td>
+                    <td class="px-6 py-4 text-gray-500">
+                        <span class="cursor-pointer hover:text-blue-600 hover:underline" data-fulltext="${pedagogy}">
+                            ${truncatedPedagogy}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                         <button onclick="navigator.clipboard.writeText('${app.shortUrl || app.app_url}')" class="text-blue-600 hover:text-blue-800" title="העתק קישור">
+                            <i class="fas fa-copy"></i>
+                         </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // Add event listeners for the clickable text spans
+        galleryTableBody.querySelectorAll('[data-fulltext]').forEach(span => {
+            span.addEventListener('click', (e) => {
+                const fullText = e.target.dataset.fulltext;
+                showFullText('הסבר פדגוגי מלא', fullText);
+            });
+        });
+    } catch (error) {
+        console.error("Error loading gallery:", error);
+        galleryTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">שגיאה בטעינת הגלריה.</td></tr>`;
+    }
+}
+
+// --- Work Session Management ---
+async function saveCurrentSession() {
+    if (!generatedHtmlContent) {
+        alert('אין יישומון לשמירה');
+        return;
+    }
+    
+    const sessionName = prompt('שם לשמירה:', document.getElementById('app-name').value || 'סשן עבודה');
+    if (!sessionName) return;
+    
+    const currentAppData = {
+        htmlCode: generatedHtmlContent,
+        metadata: {
+            appName: document.getElementById('app-name').value,
+            gradeLevel: document.getElementById('grade-level').value,
+            domain: document.getElementById('domain-input').value,
+            subDomain: document.getElementById('sub-domain-input').value,
+            pedagogicalExplanation: document.getElementById('pedagogy').value
+        }
+    };
+    
+    try {
+        const saveWorkSession = functions.httpsCallable('saveWorkSession');
+        const result = await saveWorkSession({
+            sessionName: sessionName,
+            currentApp: currentAppData,
+            originalPrompt: originalPromptData,
+            sessionHistory: conversationHistory.map(entry => entry.message)
+        });
+        
+        if (result.data.success) {
+            currentSessionId = result.data.sessionId;
+            alert('הסשן נשמר בהצלחה!');
+        } else {
+            throw new Error(result.data.message || 'שגיאה בשמירה');
+        }
+    } catch (error) {
+        console.error('Error saving session:', error);
+        alert(`שגיאה בשמירת הסשן: ${error.message}`);
+    }
+}
+
+async function showLoadSessionModal() {
+    try {
+        const getUserWorkSessions = functions.httpsCallable('getUserWorkSessions');
+        const result = await getUserWorkSessions();
+        
+        if (!result.data.success || !result.data.sessions.length) {
+            alert('לא נמצאו סשנים שמורים');
+            return;
+        }
+        
+        const sessions = result.data.sessions;
+        const sessionList = sessions.map((session, index) => 
+            `${index + 1}. ${session.sessionName} (${session.appName}) - ${new Date(session.lastUpdated?.toDate?.() || session.lastUpdated).toLocaleDateString()}`
+        ).join('\n');
+        
+        const choice = prompt(`בחר סשן לטעינה:\n\n${sessionList}\n\nהקלד מספר:`);
+        
+        if (choice && !isNaN(choice)) {
+            const sessionIndex = parseInt(choice) - 1;
+            if (sessionIndex >= 0 && sessionIndex < sessions.length) {
+                await loadWorkSession(sessions[sessionIndex].id);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading sessions list:', error);
+        alert(`שגיאה בטעינת רשימת הסשנים: ${error.message}`);
+    }
+}
+
+async function loadWorkSession(sessionId) {
+    try {
+        const loadWorkSessionFn = functions.httpsCallable('loadWorkSession');
+        const result = await loadWorkSessionFn({ sessionId });
+        
+        if (!result.data.success) {
+            throw new Error(result.data.message || 'שגיאה בטעינה');
+        }
+        
+        const session = result.data.session;
+        
+        // Restore app content
+        generatedHtmlContent = session.currentApp.htmlCode;
+        previewIframe.srcdoc = generatedHtmlContent;
+        
+        // Restore metadata
+        if (session.currentApp.metadata) {
+            document.getElementById('app-name').value = session.currentApp.metadata.appName || '';
+            document.getElementById('grade-level').value = session.currentApp.metadata.gradeLevel || '';
+            document.getElementById('domain-input').value = session.currentApp.metadata.domain || '';
+            document.getElementById('sub-domain-input').value = session.currentApp.metadata.subDomain || '';
+            document.getElementById('pedagogy').value = session.currentApp.metadata.pedagogicalExplanation || '';
+        }
+        
+        // Restore session state
+        currentSessionId = sessionId;
+        originalPromptData = session.originalPrompt;
+        
+        // Restore conversation history
+        conversationHistory = [];
+        if (session.sessionHistory && Array.isArray(session.sessionHistory)) {
+            session.sessionHistory.forEach((message, index) => {
+                const type = index % 2 === 0 ? 'user' : 'ai';
+                conversationHistory.push({
+                    type: type,
+                    message: message,
+                    timestamp: Date.now() - (session.sessionHistory.length - index) * 60000 // Mock timestamps
+                });
+            });
+        }
+        updateConversationDisplay();
+        
+        // Show preview tab
+        showTab('preview');
+        
+        alert(`הסשן "${session.sessionName}" נטען בהצלחה!`);
+        
+    } catch (error) {
+        console.error('Error loading work session:', error);
+        alert(`שגיאה בטעינת הסשן: ${error.message}`);
+    }
+}
+
+// --- NEW: Function to load pasted external code ---
+function loadPastedCode() {
+    const pastedHtml = externalCodeTextarea.value.trim();
+    if (!pastedHtml) {
+        alert('תיבת הטקסט ריקה. אנא הדבק קוד HTML.');
+        return;
+    }
+
+    // הגדרת התוכן הגלובלי והצגתו בתצוגה המקדימה
+    generatedHtmlContent = pastedHtml;
+    previewIframe.srcdoc = generatedHtmlContent;
+
+    // איפוס שדות המטא-דאטה (כדי שהמשתמש ימלא אותם ידנית)
+    document.getElementById('app-name').value = '';
+    document.getElementById('grade-level').value = '';
+    document.getElementById('domain-input').value = '';
+    document.getElementById('sub-domain-input').value = '';
+    document.getElementById('pedagogy').value = 'התוכן הוזן ידנית ממקור חיצוני.';
+
+    // איפוס היסטוריית השיחה
+    conversationHistory = [];
+    updateConversationDisplay();
+
+    // סגירת החלון והעברה לטאב תצוגה מקדימה
+    pasteCodeModal.classList.add('hidden');
+    showTab('preview');
+
+    alert('הקוד נטען בהצלחה! באפשרותך למלא את הפרטים ולפרסם, או לבקש שיפורים מה-AI שלנו.');
+}
+
+
+
+========================================================================================================================
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\data\personas.json
 TYPE: .json
 SIZE: 2633 characters
 FOLDER: public
@@ -693,7 +1565,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\data\prompts.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\data\prompts.json
 TYPE: .json
 SIZE: 2747 characters
 FOLDER: public
@@ -770,7 +1642,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\ar\common.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\ar\common.json
 TYPE: .json
 SIZE: 88 characters
 FOLDER: public
@@ -784,7 +1656,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\ar\student.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\ar\student.json
 TYPE: .json
 SIZE: 92 characters
 FOLDER: public
@@ -798,7 +1670,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\ar\teacher.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\ar\teacher.json
 TYPE: .json
 SIZE: 105 characters
 FOLDER: public
@@ -812,7 +1684,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\en\common.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\en\common.json
 TYPE: .json
 SIZE: 73 characters
 FOLDER: public
@@ -826,7 +1698,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\en\student.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\en\student.json
 TYPE: .json
 SIZE: 77 characters
 FOLDER: public
@@ -840,7 +1712,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\en\teacher.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\en\teacher.json
 TYPE: .json
 SIZE: 90 characters
 FOLDER: public
@@ -854,7 +1726,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\es\common.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\es\common.json
 TYPE: .json
 SIZE: 88 characters
 FOLDER: public
@@ -868,7 +1740,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\es\student.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\es\student.json
 TYPE: .json
 SIZE: 92 characters
 FOLDER: public
@@ -882,7 +1754,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\es\teacher.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\es\teacher.json
 TYPE: .json
 SIZE: 105 characters
 FOLDER: public
@@ -896,7 +1768,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\fr\common.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\fr\common.json
 TYPE: .json
 SIZE: 88 characters
 FOLDER: public
@@ -910,7 +1782,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\fr\student.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\fr\student.json
 TYPE: .json
 SIZE: 92 characters
 FOLDER: public
@@ -924,7 +1796,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\fr\teacher.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\fr\teacher.json
 TYPE: .json
 SIZE: 105 characters
 FOLDER: public
@@ -938,7 +1810,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\he\common.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\he\common.json
 TYPE: .json
 SIZE: 88 characters
 FOLDER: public
@@ -952,7 +1824,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\he\student.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\he\student.json
 TYPE: .json
 SIZE: 92 characters
 FOLDER: public
@@ -966,7 +1838,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\locales\he\teacher.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\locales\he\teacher.json
 TYPE: .json
 SIZE: 105 characters
 FOLDER: public
@@ -980,7 +1852,7 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\public\prompts.json
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\public\prompts.json
 TYPE: .json
 SIZE: 2748 characters
 FOLDER: public
@@ -1058,17 +1930,17 @@ FOLDER: public
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\docs\install_guide.md
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\docs\install_guide.md
 TYPE: .md
-SIZE: 8331 characters
+SIZE: 10988 characters
 FOLDER: docs
 ========================================================================================================================
 
 # מדריך התקנה והגדרה: פרויקט Vibe Studio
 
-**גרסה: 1.2**
+**גרסה: 2.0 - עם מנגנון FireClass Integration החדש**
 
-מסמך זה מכיל את כל השלבים הנדרשים להקמה מלאה של פרויקט Vibe Studio, מסביבת הענן ועד להרצה מקומית. **עודכן עם פתרונות לכל השגיאות שזוהו במהלך הפיתוח.**
+מסמך זה מכיל את כל השלבים הנדרשים להקמה מלאה של פרויקט Vibe Studio, כולל האינטגרציה החדשה עם FireClass באמצעות Service Account. **עודכן עם המנגנון החדש והבטוח יותר.**
 
 ## שלב 1: הגדרת סביבת הענן ב-Firebase
 
@@ -1088,7 +1960,7 @@ FOLDER: docs
     * תן כינוי לאפליקציה (למשל, "Vibe Studio Web").
     * **אל תסמן** את התיבה `Firebase Hosting`.
     * בסיום, העתק את אובייקט ה-`firebaseConfig` המלא ושמור אותו בצד.
-5.  **אשר דומיינים (שלב קריטי):**
+5.  **אשר דומיינים (שלב קריטי)**:
     * בלשונית **Authentication -> Settings -> Authorized domains**, לחץ על **Add domain**.
     * הוסף את הדומיינים הבאים, אחד אחרי השני:
         * `localhost`
@@ -1096,7 +1968,42 @@ FOLDER: docs
 
 ---
 
-## שלב 2: הקמת הפרויקט המקומי
+## שלב 2: הגדרת FireClass Service Account (חדש!)
+
+**שלב זה הכרחי למנגנון החדש - גישה ישירה לפיירסטור של FireClass:**
+
+1.  **היכנס לפרויקט FireClass** במסוף Firebase (לא הסטודיו!).
+2.  **לך ל-Project Settings** (הגלגל שיניים) → **Service accounts**.
+3.  **לחץ על "Generate new private key"**.
+4.  **בחר את החשבון:** `firebase-adminsdk-xxxxx@fireclass.iam.gserviceaccount.com`.
+5.  **הורד את קובץ ה-JSON** - זהו ה-Service Account שלך.
+6.  **שמור את הקובץ** במקום בטוח (אל תעלה אותו לגיט!).
+
+---
+
+## שלב 3: הגדרת Secrets ב-Vibe Studio
+
+1.  **היכנס לפרויקט Vibe Studio** במסוף Firebase.
+2.  **לך ל-Functions → Secrets** (אם לא רואה, השתמש ב-CLI).
+3.  **הגדר את הסודות הבאים:**
+
+    ```bash
+    # הגדר את Service Account של FireClass
+    firebase functions:secrets:set FIRECLASS_SERVICE_ACCOUNT
+    
+    # הגדר את שאר הסודות
+    firebase functions:secrets:set GEMINI_API_KEY
+    firebase functions:secrets:set BITLY_ACCESS_TOKEN
+    ```
+
+4.  **עבור FIRECLASS_SERVICE_ACCOUNT:**
+    - פתח את קובץ ה-JSON שהורדת בשלב 2
+    - העתק את **כל התוכן** (כולל הסוגריים המסולסלות)
+    - הדבק אותו כערך של הסוד
+
+---
+
+## שלב 4: הקמת הפרויקט המקומי
 
 1.  **צור תיקייה חדשה וריקה** במחשב שלך (למשל, `fireclassStudio`).
 2.  **פתח טרמינל בתוך התיקייה החדשה** והרץ `firebase init`.
@@ -1112,19 +2019,19 @@ FOLDER: docs
 
 ---
 
-## שלב 3: הוספת קוד המקור
+## שלב 5: הוספת קוד המקור
 
 1.  **צור את קבצי המקור** (`public/index.html`, `public/css/style.css`, `public/js/studio.js`, ו-`functions/index.js`) והדבק בהם את הקוד המלא מהשיחה שלנו.
 2.  **הוסף את פרטי התצורה:** פתח את הקובץ `public/js/firebase-config.js` והדבק בו את אובייקט ה-`firebaseConfig` ששמרת בשלב 1.
 
 ---
 
-## שלב 4: התקנת תלויות וקונפיגורציה
+## שלב 6: התקנת תלויות וקונפיגורציה
 
-1.  **התקן תלויות בשרת:**
+1.  **התקן תלויות בשרת**:
     * בטרמינל, נווט לתיקיית `functions` (`cd functions`).
-    * הרץ את הפקודה: `npm install jszip axios`.
-2.  **הגדר את ESLint:**
+    * הרץ את הפקודה: `npm install bitly qrcode`.
+2.  **הגדר את ESLint**:
     * פתח את הקובץ `functions/.eslintrc.js`.
     * בתוך האובייקט `rules`, הוסף את השורות הבאות:
         ```javascript
@@ -1135,20 +2042,20 @@ FOLDER: docs
 
 ---
 
-## שלב 5: פריסה ובדיקה
+## שלב 7: פריסה ובדיקה
 
-1.  **פרוס את קוד השרת לענן:**
+1.  **פרוס את קוד השרת לענן**:
     ```bash
     firebase deploy --only functions
     ```
-2.  **הרץ את האפליקציה מקומית:**
+2.  **הרץ את האפליקציה מקומית**:
     * התקן `live-server` (אם לא מותקן): `npm install -g live-server`.
     * נווט לתיקיית `public` (`cd public`).
     * הרץ את הפקודה: `live-server`.
 
 ---
 
-## שלב 6: הגדרות לסביבת ייצור (Production)
+## שלב 8: הגדרות לסביבת ייצור (Production)
 
 **חשוב:** כאשר תפרוס את האתר לסביבת הייצור שלך ב-Azure, תצטרך לבצע את הפעולה הבאה כדי שההתחברות תעבוד:
 
@@ -1162,7 +2069,7 @@ FOLDER: docs
 
 ---
 
-## שלב 7: מנגנון Download Tokens - הפתרון הסופי
+## שלב 9: מנגנון Download Tokens - הפתרון הסופי
 
 **עדכון חשוב:** לאחר ניסיונות רבים עם מנגנונים שונים, המערכת עברה לשימוש ב-**Download Tokens** של Firebase Storage. זהו הפתרון היציב והבטוח ביותר.
 
@@ -1190,9 +2097,40 @@ Download Tokens הם מנגנון של Firebase Storage שמאפשר גישה ל
 
 ---
 
-## שלב 8 (פתרון תקלות): היסטוריה מלאה של השגיאות והפתרונות
+## שלב 10: מנגנון אימות המורה החדש (FireClass Integration)
 
-### 8.1. שגיאת HttpsError (500 Internal Server Error)
+**המנגנון החדש והבטוח יותר:**
+
+### איך זה עובד:
+
+1. **אפליקציה כפולה:** סטודיו יוצר שתי אפליקציות Firebase Admin:
+   - **אפליקציה ראשית:** לגישה לפיירסטור של סטודיו
+   - **אפליקציה שנייה:** לגישה לפיירסטור של קלאס
+
+2. **Service Account:** משתמש ב-`FIRECLASS_SERVICE_ACCOUNT` לגישה ישירה לפיירסטור של קלאס
+
+3. **בדיקה ישירה:** שואל ישירות ב-`teachers` collection עם `profile.email`
+
+### יתרונות המנגנון החדש:
+
+- **מהיר יותר:** גישה ישירה לפיירסטור
+- **יציב יותר:** לא תלוי ב-API חיצוני
+- **בטוח יותר:** הרשאות מוגדרות היטב
+- **פשוט יותר:** פחות נקודות כשל
+
+### בדיקת המנגנון:
+
+לאחר פריסה, תראה בלוגים:
+```
+🔍 [DB-VERIFY] Starting teacher verification for: teacher@example.com
+🎯 [DB-VERIFY] Verification result for teacher@example.com: Found
+```
+
+---
+
+## שלב 11 (פתרון תקלות): היסטוריה מלאה של השגיאות והפתרונות
+
+### 11.1. שגיאת HttpsError (500 Internal Server Error)
 
 **הבעיה:** שימוש לא נכון בסינטקס של Firebase Functions v2.
 
@@ -1211,20 +2149,20 @@ const {onCall, HttpsError} = require("firebase-functions/v2/https");
 throw new HttpsError("unauthenticated", "Auth required.");
 ```
 
-### 8.2. בדיקת verifyTeacher כפולה
+### 11.2. בעיות Service Account
 
-**הבעיה:** בדיקה מיותרת של הרשאות מורה בפונקציות publish.
+**הבעיה:** שגיאות בעת ניסיון לגשת לפיירסטור של קלאס.
 
 **הסימפטומים:**
-- לוגים כפולים
-- ביצועים מיותרים
+- שגיאה "CRITICAL: Failed to parse FIRECLASS_SERVICE_ACCOUNT secret"
+- שגיאות הרשאה בעת בדיקת מורה
 
-**הפתרון:** הסרת הבדיקה הכפולה והשארת לוג בלבד:
-```javascript
-console.log(`⚠️ Skipping duplicate verifyTeacher check for ${email}`);
-```
+**הפתרון:**
+1. וודא שה-`FIRECLASS_SERVICE_ACCOUNT` מוגדר נכון
+2. וודא שהערך הוא JSON מלא (כולל סוגריים מסולסלות)
+3. וודא שה-Service Account יש לו הרשאות לקרוא לפיירסטור של קלאס
 
-### 8.3. בעיות הרשאות Cloud Storage (הבעיה המרכזית)
+### 11.3. בעיות הרשאות Cloud Storage (הבעיה המרכזית)
 
 **הבעיה:** שגיאות 500 עקב בעיות IAM עם makePublic() ו-publicUrl().
 
@@ -1257,7 +2195,7 @@ await file.save(htmlContent, {
 const longUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
 ```
 
-### 8.4. אתחול Firebase Admin SDK
+### 11.4. אתחול Firebase Admin SDK
 
 **הבעיה:** אי-ודאות לגבי הגדרת storageBucket באתחול.
 
@@ -1268,7 +2206,7 @@ const bucket = admin.storage().bucket();
 console.log(`🚀 Firebase Admin initialized with bucket: ${bucket.name}`);
 ```
 
-### 8.5. URL Parsing ב-downloadCode
+### 11.5. URL Parsing ב-downloadCode
 
 **הבעיה:** תמיכה בפורמטים שונים של URLs.
 
@@ -1286,7 +2224,7 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 
 ---
 
-## שלב 9: בדיקה וניטור
+## שלב 12: בדיקה וניטור
 
 ### בדיקת הפונקציות
 
@@ -1296,7 +2234,8 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 2. **חפש הודעות:**
    - `🚀 Firebase Admin initialized with bucket: fireclassstudio.firebasestorage.app`
    - `📦 Bucket: fireclassstudio.firebasestorage.app, FilePath: apps/...`
-   - `⚠️ Skipping duplicate verifyTeacher check for...`
+   - `🔍 [DB-VERIFY] Starting teacher verification for...`
+   - `🎯 [DB-VERIFY] Verification result for...: Found`
 
 ### בדיקת Storage
 
@@ -1311,6 +2250,12 @@ else if (u.hostname.endsWith("googleapis.com") && u.pathname.startsWith(`/${buck
 https://firebasestorage.googleapis.com/v0/b/fireclassstudio.firebasestorage.app/o/apps%2Fuid%2Ftimestamp%2Findex.html?alt=media&token=uuid
 ```
 
+### בדיקת אימות המורה
+
+1. **נסה להיכנס עם מורה רשום בקלאס**
+2. **בדוק בלוגים:** `🎯 [DB-VERIFY] Verification result for...: Found`
+3. **אם יש שגיאה:** בדוק את ה-`FIRECLASS_SERVICE_ACCOUNT`
+
 ---
 
 ## סיכום הפתרונות
@@ -1321,20 +2266,30 @@ https://firebasestorage.googleapis.com/v0/b/fireclassstudio.firebasestorage.app/
 - ❌ **Signed URLs** → ✅ **Download Tokens**
 - ❌ **HttpsError שגוי** → ✅ **HttpsError נכון**
 - ❌ **אתחול לא ברור** → ✅ **אתחול מפורש**
+- ❌ **API חיצוני** → ✅ **גישה ישירה לפיירסטור של קלאס**
 
-**התוצאה:** מערכת יציבה, מהירה, ובטוחה ללא בעיות הרשאות! 🚀
+**התוצאה:** מערכת יציבה, מהירה, ובטוחה עם אינטגרציה מלאה של FireClass! 🚀
+
+---
+
+## הערות חשובות
+
+1. **אל תעלה את קובץ ה-Service Account לגיט!** הוא מכיל מפתחות פרטיים.
+2. **וודא שה-Service Account יש לו הרשאות לקרוא לפיירסטור של קלאס.**
+3. **אחרי כל שינוי בקוד, תצטרך לפרוס מחדש את הפונקציות.**
+4. **המנגנון החדש עובד רק עם מורים רשומים בקלאס.**
 
 
 ========================================================================================================================
-FILE: C:\Users\Meir Livneh\Documents\fireStudio\docs\vibe_studio_spec.md
+FILE: C:\Users\Meir Livneh\Documents\fireclassStudio\docs\vibe_studio_spec.md
 TYPE: .md
-SIZE: 5856 characters
+SIZE: 9247 characters
 FOLDER: docs
 ========================================================================================================================
 
 # Vibe Studio – Version 2.0 Specification
 
-**Last Updated:** August 30, 2025  
+**Last Updated:** December 19, 2024  
 **Status:** In Development
 
 ---
@@ -1342,6 +2297,8 @@ FOLDER: docs
 ## 1. Vision & Core Philosophy
 
 **Vibe Studio** is a *No-Code* web platform that empowers teachers to create interactive educational applets through natural dialogue with AI.
+
+The platform supports both AI-guided creation for rapid development and manual code ingestion for maximum flexibility.
 
 The guiding philosophy is that building a high-quality educational tool is not a single step, but a **multi-layered process**.
 
@@ -1364,31 +2321,46 @@ The system is fully **bilingual (Hebrew & English)**, including the interface an
 - **Database:** Firestore
 - **Serverless Logic:** Firebase Cloud Functions
 - **File Storage:** Firebase Cloud Storage (HTML applets with secure download tokens)
-- **AI Model:** Google Gemini API (`gemini-1.5-flash`) with structured JSON output
+- **AI Model:** Google Gemini API (`gemini-2.5-flash`) with structured JSON output
+- **FireClass Integration:** Direct Firestore access via Service Account
 
 ---
 
-## 3. Pedagogical Workflow (3 Steps)
+## 3. Creation Workflows
 
-The user experience is structured as a **guided dialogue** with the AI:
+Vibe Studio offers two distinct creation paths to accommodate different teacher preferences and needs:
 
-### Step 1: Choose the AI Persona (*The How*)
+### Workflow A: AI-Guided Creation
+The primary workflow is a guided dialogue with the AI in three steps:
+
+#### Step 1: Choose the AI Persona (*The How*)
 - Teachers select from a library of **AI Teacher Personas**, each representing a pedagogical style
 - Examples: *Socratic Teacher, The Coach, The Demonstrator, The Storyteller, Gamified Teacher*
 - Optional refinement: Teachers may add a short sentence (e.g., "...use a friendly and encouraging tone.")
 
-### Step 2: Choose the Activity Template (*The What*)
+#### Step 2: Choose the Activity Template (*The What*)
 - Teachers select from **predefined Activity Templates** (JSON-based)
 - Examples: *Quiz/Test, Drag & Drop Game, Puzzle, Simulation*
 - Each template provides a structured prompt with placeholders
 
-### Step 3: Add Specific Content (*The Why*)
+#### Step 3: Add Specific Content (*The Why*)
 - Teachers fill in the template with actual content and context
 - Example:  
   *"A quiz for 4th graders on the water cycle, 5 multiple-choice questions on evaporation, condensation, precipitation. Make it funny with animal characters."*
 
 After generation, the teacher can refine via chat-like dialogue:  
 *"Make question 3 harder," "Add scoring system," etc.*
+
+### Workflow B: Manual Code Ingestion
+For teachers who create applets using external tools (like ChatGPT, Claude, or a code editor), Vibe Studio offers a manual ingestion path.
+
+**Paste Code:** The user pastes a complete, single-page HTML file into a dedicated modal window.
+
+**Preview:** The system renders the pasted code in the live preview iframe.
+
+**Refine (Optional):** The user can then leverage Vibe Studio's integrated Gemini AI to make iterative improvements on the pasted code.
+
+**Publish:** The user manually fills in the applet's metadata (name, grade level, etc.) and uses the standard publishing workflow to save and share the applet.
 
 ---
 
@@ -1465,18 +2437,38 @@ Both support bilingual content (English/Hebrew).
 - Live Preview via `iframe.srcdoc`
 - Auto-filled metadata form from AI JSON
 - Publish button → triggers save to Firebase
+- **External Code Ingestion:** Modal window for pasting HTML code from external sources
+- **Dynamic Loading Messages:** Real-time progress updates during AI generation
+- **Dual Creation Paths:** AI-guided creation and manual code ingestion workflows
 
 ---
 
 ## 8. Publishing Workflow
 
 ### 8.1 Publish Function (publishHtml)
-- Saves applet HTML to Firebase Storage at: `apps/{uid}/{timestamp}/index.html`
-- Generates secure public URL with download token
-- Calls TinyURL API for short link
-- Returns `{longUrl, shortUrl}`
+- **Teacher Verification:** Direct Firestore query to FireClass database via Service Account
+- **File Storage:** Saves applet HTML to Firebase Storage at: `apps/{uid}/{timestamp}/index.html`
+- **URL Generation:** Creates secure public URL with download token
+- **Bit.ly Integration:** Generates short link for sharing
+- **Returns:** `{longUrl, shortUrl, qrCodeDataUrl}`
 
-### 8.2 Metadata Storage
+This function handles both applets generated by the internal AI and those ingested via the manual code pasting workflow. For manually pasted applets, all metadata is provided by the user directly in the publish tab.
+
+### 8.2 Teacher Verification System
+**New Architecture (v2.0):**
+- **Primary App:** Vibe Studio (admin.initializeApp())
+- **Secondary App:** FireClass (admin.initializeApp({credential: serviceAccount}, 'fireClassApp'))
+- **Direct Access:** Queries FireClass Firestore directly via `teachers` collection
+- **Query Field:** `profile.email` for exact teacher matching
+- **Security:** Uses `FIRECLASS_SERVICE_ACCOUNT` secret for authentication
+
+**Benefits:**
+- No external API dependencies
+- Faster response times
+- More reliable verification
+- Direct database access
+
+### 8.3 Metadata Storage
 **Firestore Collection:** `community_apps`
 
 **Fields:**
@@ -1485,7 +2477,7 @@ Both support bilingual content (English/Hebrew).
 - `pedagogicalExplanation`, `instructions`
 - `app_url`, `teacher_uid`, `teacher_name`, `createdAt`
 
-### 8.3 Update Function (updateAppDetails)
+### 8.4 Update Function (updateAppDetails)
 Teachers may update app details (only owner can edit).
 
 ---
@@ -1493,6 +2485,9 @@ Teachers may update app details (only owner can edit).
 ## 9. Security & Permissions
 
 - All Cloud Functions require authenticated users
+- **Teacher Verification:** Direct Firestore access to FireClass database via Service Account
+- **Service Account:** `FIRECLASS_SERVICE_ACCOUNT` secret contains full JSON credentials
+- **Dual App Architecture:** Separate Firebase Admin instances for Studio and FireClass
 - Firestore rules enforce: only the owner (`teacher_uid`) can update their apps
 - Published apps are accessible only via secure download token URLs
 
@@ -1505,19 +2500,27 @@ Teachers may update app details (only owner can edit).
 - **Accessibility:** Clear labels, loading spinners, bilingual support
 - **Reliability:** AI responses validated against schema
 - **Code Quality:** Generated HTML must be single-file, Tailwind-based, readable, and commented
+- **Teacher Verification:** Sub-second response time for database queries
+- **User Experience:** Dynamic loading messages provide real-time feedback during AI generation
+- **Flexibility:** Support for both AI-generated and manually pasted code with seamless workflow integration
 
 ---
 
 ## 11. Future Roadmap
 
-### Version 3.0 (FireClass Integration)
-- Auto-sync published apps to teacher's personal FireClass library
+### Version 3.0 (Enhanced FireClass Integration)
+- Real-time sync of published apps to teacher's personal FireClass library
 - Suggest apps to public library pending admin approval
+- Advanced teacher analytics and usage tracking
 
-### Version 4.0 (Advanced Users)
-- Manual .zip upload option
-- Deployment to Netlify for complex multi-file projects
-- Hybrid model: simple AI apps → Firebase, advanced apps → Netlify
+### Version 4.0 (Hybrid Deployment Model)
+To support teachers with multi-file projects (containing separate JS/CSS/image files) and to shift hosting costs, a hybrid deployment model will be introduced.
+
+**Netlify Integration:** Teachers will be able to connect their personal Netlify account to Vibe Studio via a secure OAuth2 flow.
+
+**Automated Deployment:** Vibe Studio will provide an interface for teachers to upload a .zip file of their project. The backend will then use the Netlify API to programmatically deploy the zipped project directly to the teacher's own Netlify account.
+
+**Benefit:** This empowers advanced users and transitions the hosting responsibility for complex projects from the central platform to the individual teacher, creating a sustainable cost model.
 
 ---
 
@@ -1525,6 +2528,6 @@ Teachers may update app details (only owner can edit).
 
 
 ================================================================================
-SUMMARY: 24 files added
+SUMMARY: 25 files added
 Folders searched: public, docs
 ================================================================================

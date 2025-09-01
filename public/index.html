@@ -84,6 +84,12 @@
                             <i class="fas fa-magic ltr:mr-2 rtl:ml-2"></i>
                             <span data-lang="generate_btn">צור עם AI</span>
                         </button>
+                        
+                        <button id="paste-external-code-btn" class="mt-2 w-full bg-gray-600 text-white p-3 rounded-md font-semibold hover:bg-gray-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-paste ltr:mr-2 rtl:ml-2"></i>
+                            <span data-lang="paste_external_code">הדבק קוד חיצוני</span>
+                        </button>
+                        
                          <div id="loading-spinner" class="hidden text-center p-8">
                             <i class="fas fa-spinner fa-spin fa-3x text-blue-600"></i>
                             <p class="mt-4 text-gray-600" data-lang="loading_ai">יוצר... אנא המתן...</p>
@@ -160,6 +166,18 @@
                 <div class="items-center px-4 py-3">
                     <button id="close-results-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600">סגור</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="paste-code-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="relative mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4" data-lang="paste_external_code_title">הדבקת קוד חיצוני</h3>
+            <p class="text-sm text-gray-600 mb-4" data-lang="paste_external_code_desc">הדבק כאן קוד HTML מלא (כולל תגיות html, head, body) שנוצר ממקור חיצוני (כמו Claude או ChatGPT).</p>
+            <textarea id="external-code-textarea" class="w-full h-80 p-2 border border-gray-300 rounded-md font-mono text-sm" placeholder="<html>...</html>"></textarea>
+            <div class="mt-4 flex justify-end space-x-2 rtl:space-x-reverse">
+                <button id="cancel-paste-modal" class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600" data-lang="cancel">בטל</button>
+                <button id="load-pasted-code-btn" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700" data-lang="load_pasted_code">טען לתצוגה מקדימה</button>
             </div>
         </div>
     </div>
