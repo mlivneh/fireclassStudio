@@ -287,6 +287,10 @@ exports.askVibeAI = onCall({ secrets: [geminiApiKey] }, async (request) => {
 
         // Store the generation in Firestore for analytics
         const generationRef = admin.firestore().collection('generations').doc();
+        
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 90); // 90 יום מהיום
+        
         await generationRef.set({
             uid: request.auth.uid,
             prompt: promptData,
@@ -295,7 +299,8 @@ exports.askVibeAI = onCall({ secrets: [geminiApiKey] }, async (request) => {
             language: language,
             response: parsedContent,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            model: "gemini-2.5-flash"
+            model: "gemini-2.5-flash",
+            expireAt: expiryDate // הוספת שדה התפוגה
         });
 
         console.log('✅ [ASK_VIBE_AI] AI generation completed successfully');
@@ -327,6 +332,11 @@ exports.saveWorkSession = onCall(async (request) => {
 
     try {
         const sessionRef = admin.firestore().collection('work_sessions').doc();
+
+        // --- הוספת לוגיקת תפוגה ---
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 30); // 30 יום מהיום
+        // --------------------------
         
         await sessionRef.set({
             uid: request.auth.uid,
@@ -336,7 +346,8 @@ exports.saveWorkSession = onCall(async (request) => {
             sessionHistory: sessionHistory || [],
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
-            status: 'active'
+            status: 'active',
+            expireAt: expiryDate // הוספת שדה התפוגה
         });
 
         console.log('✅ [SAVE_WORK_SESSION] Work session saved successfully');
@@ -489,5 +500,60 @@ exports.updateAppDetails = onCall(async (request) => {
     } catch (error) {
         console.error('❌ [UPDATE_APP_DETAILS] Update failed:', error);
         throw new HttpsError('internal', `Update failed: ${error.message}`);
+    }
+});
+
+// Function to delete applet (owner only)
+exports.deleteApplet = onCall({ secrets: [fireclassServiceAccount] }, async (request) => {
+    // שלב 1: וידוא שהמשתמש מחובר
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'You must be logged in to delete an applet.');
+    }
+
+    const appId = request.data.id;
+    const requesterId = request.auth.uid;
+    const db = admin.firestore();
+    const bucket = admin.storage().bucket();
+
+    const appRef = db.collection('community_apps').doc(appId);
+
+    try {
+        const doc = await appRef.get();
+        if (!doc.exists) {
+            throw new HttpsError('not-found', 'Applet not found.');
+        }
+
+        const appData = doc.data();
+        const ownerId = appData.teacher_uid;
+
+        // שלב 2: וידוא בעלות (השלב הקריטי)
+        if (ownerId !== requesterId) {
+            throw new HttpsError('permission-denied', 'You can only delete your own applets.');
+        }
+
+        // שלב 3: מחיקת קבצים מהאחסון (Storage)
+        if (appData.app_url) {
+            const url = new URL(appData.app_url);
+            const encodedPath = url.pathname.split('/o/')[1];
+            if (encodedPath) {
+                const decodedPath = decodeURIComponent(encodedPath);
+                const folderPath = require('path').dirname(decodedPath) + '/';
+                await bucket.deleteFiles({ prefix: folderPath });
+            }
+        }
+
+        // שלב 4: מחיקת המסמך מ-Firestore
+        await appRef.delete();
+
+        console.log('✅ [DELETE_APPLET] Applet deleted successfully');
+        
+        return { success: true };
+
+    } catch (error) {
+        console.error("❌ [DELETE_APPLET] Deletion failed:", error);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', 'An error occurred while deleting the applet.');
     }
 });

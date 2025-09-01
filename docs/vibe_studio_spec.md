@@ -1,6 +1,6 @@
 # Vibe Studio – Version 2.0 Specification
 
-**Last Updated:** December 19, 2024  
+**Last Updated:** December 20, 2024  
 **Status:** In Development
 
 ---
@@ -95,9 +95,40 @@ Always respond with JSON matching the schema.
 
 This **Mega-Prompt** is passed to the `askVibeAI` Cloud Function.
 
+### 5.2 Work Session Management Functions
+
+**saveWorkSession:**
+- Saves current app state with metadata and conversation history
+- Automatically sets 30-day expiration timestamp
+- Returns session ID for future retrieval
+
+**loadWorkSession:**
+- Loads saved session by ID with ownership verification
+- Restores app content, metadata, and conversation history
+- Updates last accessed timestamp
+
+**getUserWorkSessions:**
+- Retrieves list of user's saved sessions (limited to 20 most recent)
+- Includes session names, app names, and timestamps
+- Supports session management workflow
+
+### 5.3 App Management Functions
+
+**deleteApplet:**
+- Securely deletes applet with ownership verification
+- Removes both Firestore document and Firebase Storage files
+- Requires authentication and ownership confirmation
+
+**updateAppDetails:**
+- Allows teachers to update app metadata (owner only)
+- Restricts updates to specific fields for security
+- Maintains audit trail with update timestamps
+
 ---
 
-## 5. AI & Cloud Function: askVibeAI
+## 5. Cloud Functions & AI Integration
+
+### 5.1 askVibeAI Function
 
 - **Input:**
   - `prompt`: Mega-Prompt object (persona + template + content)
@@ -151,10 +182,52 @@ Both support bilingual content (English/Hebrew).
 - **External Code Ingestion:** Modal window for pasting HTML code from external sources
 - **Dynamic Loading Messages:** Real-time progress updates during AI generation
 - **Dual Creation Paths:** AI-guided creation and manual code ingestion workflows
+- **Secure App Deletion:** Delete button in gallery with ownership verification
+- **Work Session Management:** Save/load draft sessions with automatic expiration
 
 ---
 
-## 8. Publishing Workflow
+## 8. App Management & Lifecycle
+
+### 8.1 Secure App Deletion System
+Vibe Studio provides teachers with secure deletion capabilities for their own applets:
+
+**Security Features:**
+- **Ownership Verification:** Only the app owner can delete their applets
+- **Dual Confirmation:** User must confirm deletion with a warning dialog
+- **Complete Cleanup:** Removes both Firestore documents and Firebase Storage files
+- **Audit Trail:** All deletion operations are logged for security monitoring
+
+**Deletion Process:**
+1. Teacher clicks delete button in gallery view
+2. System displays confirmation dialog with app name
+3. Upon confirmation, `deleteApplet` Cloud Function is called
+4. Function verifies ownership and performs complete cleanup
+5. Gallery is automatically refreshed to reflect changes
+
+### 8.2 Automatic Data Expiration (TTL)
+The system implements automatic data cleanup to maintain efficiency and reduce costs:
+
+**Work Sessions (Drafts):**
+- **Collection:** `work_sessions`
+- **Expiration:** 30 days from creation
+- **Purpose:** Clean up unused teacher drafts and work-in-progress
+- **Field:** `expireAt` timestamp
+
+**AI Generation Logs:**
+- **Collection:** `generations`
+- **Expiration:** 90 days from creation
+- **Purpose:** Maintain AI analytics while preventing data accumulation
+- **Field:** `expireAt` timestamp
+
+**TTL Configuration:**
+- Requires manual setup in Firebase Console
+- Two separate policies for different collections
+- Automatic deletion handled by Firebase infrastructure
+
+---
+
+## 9. Publishing Workflow
 
 ### 8.1 Publish Function (publishHtml)
 - **Teacher Verification:** Direct Firestore query to FireClass database via Service Account
@@ -214,6 +287,8 @@ Teachers may update app details (only owner can edit).
 - **Teacher Verification:** Sub-second response time for database queries
 - **User Experience:** Dynamic loading messages provide real-time feedback during AI generation
 - **Flexibility:** Support for both AI-generated and manually pasted code with seamless workflow integration
+- **Data Management:** Automatic cleanup of expired drafts and AI logs to maintain system efficiency
+- **Security:** Secure deletion system with ownership verification and complete data cleanup
 
 ---
 

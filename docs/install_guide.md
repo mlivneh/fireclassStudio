@@ -1,6 +1,6 @@
 # מדריך התקנה והגדרה: פרויקט Vibe Studio
 
-**גרסה: 2.0 - עם מנגנון FireClass Integration החדש**
+**גרסה: 2.1 - עם מנגנון FireClass Integration, מחיקה מאובטחת ו-TTL אוטומטי**
 
 מסמך זה מכיל את כל השלבים הנדרשים להקמה מלאה של פרויקט Vibe Studio, כולל האינטגרציה החדשה עם FireClass באמצעות Service Account. **עודכן עם המנגנון החדש והבטוח יותר.**
 
@@ -89,6 +89,15 @@
 ---
 
 ## שלב 6: התקנת תלויות וקונפיגורציה
+
+1.  **התקן תלויות בשרת**:
+    * בטרמינל, נווט לתיקיית `functions` (`cd functions`).
+    * הרץ את הפקודה: `npm install bitly qrcode`.
+2.  **הגדר את ESLint**:
+    * פתח את הקובץ `functions/.eslintrc.js`.
+    * בתוך האובייקט `rules`, הוסף את השורות הבאות:
+        ```javascript
+        "require-jsdoc": "off",
 
 1.  **התקן תלויות בשרת**:
     * בטרמינל, נווט לתיקיית `functions` (`cd functions`).
@@ -334,9 +343,39 @@ https://firebasestorage.googleapis.com/v0/b/fireclassstudio.firebasestorage.app/
 
 ---
 
+## שלב 13: הגדרת TTL (Time-to-Live) למחיקה אוטומטית
+
+**שלב זה הכרחי להפעלת מנגנון הניקוי האוטומטי!**
+
+### הגדרת מדיניות TTL למסמכים
+
+לאחר פריסת הקוד, יש להגדיר שתי מדיניות TTL במסוף Firebase:
+
+1. **כנס למסוף Firebase > Firestore Database > TTL**
+2. **צור מדיניות ראשונה - טיוטות:**
+   - Collection group: `work_sessions`
+   - Timestamp field: `expireAt`
+   - לחץ Save
+
+3. **צור מדיניות שנייה - תיעוד AI:**
+   - לחץ Create Policy
+   - Collection group: `generations`
+   - Timestamp field: `expireAt`
+   - לחץ Save
+
+### מה קורה עם TTL?
+
+- **טיוטות (work_sessions):** נמחקות אוטומטית אחרי 30 יום
+- **תיעוד AI (generations):** נמחק אוטומטית אחרי 90 יום
+- **חיסכון בעלויות:** מסד נתונים נקי ויעיל
+- **ביצועים משופרים:** פחות נתונים לשאילתות
+
+---
+
 ## הערות חשובות
 
 1. **אל תעלה את קובץ ה-Service Account לגיט!** הוא מכיל מפתחות פרטיים.
 2. **וודא שה-Service Account יש לו הרשאות לקרוא לפיירסטור של קלאס.**
 3. **אחרי כל שינוי בקוד, תצטרך לפרוס מחדש את הפונקציות.**
 4. **המנגנון החדש עובד רק עם מורים רשומים בקלאס.**
+5. **הגדרת TTL היא שלב הכרחי - ללא זה לא יהיה ניקוי אוטומטי!**

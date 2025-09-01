@@ -622,6 +622,9 @@ async function loadGallery() {
                          <button onclick="navigator.clipboard.writeText('${app.shortUrl || app.app_url}')" class="text-blue-600 hover:text-blue-800" title="העתק קישור">
                             <i class="fas fa-copy"></i>
                          </button>
+                         <button onclick="deleteApp('${doc.id}', '${app.appName}')" class="text-red-600 hover:text-red-800 ml-4" title="מחק יישומון">
+                            <i class="fas fa-trash"></i>
+                         </button>
                     </td>
                 </tr>
             `;
@@ -794,3 +797,30 @@ function loadPastedCode() {
 
     alert('הקוד נטען בהצלחה! באפשרותך למלא את הפרטים ולפרסם, או לבקש שיפורים מה-AI שלנו.');
 }
+
+// --- NEW: App Deletion Function ---
+async function deleteApp(appId, appName) {
+    // וידוא לפני מחיקה - שלב קריטי למניעת טעויות!
+    if (!confirm(`האם אתה בטוח שברצונך למחוק את היישומון "${appName}"? לא ניתן לשחזר פעולה זו.`)) {
+        return;
+    }
+
+    try {
+        // קריאה לפונקציית הענן החדשה שתטפל במחיקה
+        const deleteApplet = functions.httpsCallable('deleteApplet');
+        const result = await deleteApplet({ id: appId });
+
+        if (result.data.success) {
+            alert("היישומון נמחק בהצלחה!");
+            loadGallery(); // רענון הגלריה כדי להציג את השינוי
+        } else {
+            throw new Error(result.data.error || 'שגיאה לא ידועה');
+        }
+    } catch (error) {
+        console.error("Error deleting applet:", error);
+        alert(`שגיאה במחיקת היישומון: ${error.message}`);
+    }
+}
+
+// הוסף את השורה הבאה כדי לחשוף את הפונקציה לחלון הגלובלי, כך שכפתורי ה-onclick יוכלו למצוא אותה
+window.deleteApp = deleteApp;
